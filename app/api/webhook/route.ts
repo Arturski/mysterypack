@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { webhook, config } from "@imtbl/sdk";
 import axios from "axios";
 import { faker } from "@faker-js/faker";
+import { blockchainData } from "@imtbl/sdk";
+import { client } from "@/lib/client";
 
 const BASE_IMAGE_URL =
   "https://raw.githubusercontent.com/Arturski/public-static/main/demo/aliens/";
@@ -58,12 +60,13 @@ function generateAlienMetadata(tokenId: number) {
   const imageUrl = `${BASE_IMAGE_URL}${imageFilename}`;
 
   return {
-    id: tokenId,
-    image: imageUrl,
     token_id: tokenId.toString(),
     name: faker.person.fullName(),
     description: faker.lorem.sentence(),
+    image: imageUrl,
     external_url: `https://immutable-metadata-api.vercel.app/collections/aliens/nfts/${tokenId}`,
+    animation_url: null,
+    youtube_url: null,
     attributes: [
       { trait_type: "Rarity", value: rarity },
       {
@@ -79,13 +82,27 @@ function generateAlienMetadata(tokenId: number) {
   };
 }
 
-// 🔧 Placeholder: Replace this with your real minting logic
 async function mintAliens(to: string, reference: string) {
-  const aliens = [1, 2, 3].map((i) => generateAlienMetadata(Date.now() + i));
-  console.log(`🚀 Minting 3 Aliens to ${to} for ${reference}`);
-  console.log(JSON.stringify(aliens, null, 2));
-  // Replace this with actual mint call
-  return aliens;
+  const now = Date.now();
+  const assets = [1, 2, 3].map((offset) => {
+    const metadata = generateAlienMetadata(now + offset);
+    return {
+      owner_address: to,
+      reference_id: reference,
+      token_id: metadata.token_id,
+      metadata,
+    };
+  });
+
+  const res: blockchainData.Types.CreateMintRequestResult =
+    await client.createMintRequest({
+      chainName: "imtbl-zkevm-testnet", // or "imtbl-zkevm"
+      contractAddress: process.env.NEXT_PUBLIC_ALIENS_CONTRACT_ADDRESS!,
+      createMintRequestRequest: { assets },
+    });
+
+  console.log("✅ Mint request created:", JSON.stringify(res, null, 2));
+  return res;
 }
 
 export async function POST(req: NextRequest): Promise<NextResponse> {
