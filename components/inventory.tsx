@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchInventory } from "@/lib/api";
@@ -37,12 +38,13 @@ export function Inventory() {
     null
   );
   const [showCards, setShowCards] = useState(false);
+  const [revealedAliens, setRevealedAliens] = useState<NFT[]>([]);
   const [filter, setFilter] = useState<FilterType>("all");
   const [burningTokenId, setBurningTokenId] = useState<string | null>(null);
   const [burnError, setBurnError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const { burnNFT, isBurning } = useBurnNFT({
+  const { burnNFT } = useBurnNFT({
     contractAddress: "0xb001670b074140aa6942fbf62539562c65843719",
   });
 
@@ -69,35 +71,74 @@ export function Inventory() {
     return true;
   });
 
-  const handleOpenPack = (nft: NFT) => {
-    setShowCards(false);
-    setOpeningPack(nft);
+  const pollForNewAliens = async (
+    walletAddress: string,
+    contractAddress: string,
+    fromTimestamp: string,
+    maxTries = 30,
+    delayMs = 2000
+  ): Promise<NFT[]> => {
+    let tries = 0;
+
+    while (tries < maxTries) {
+      try {
+        const { data } = await axios.get(
+          `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`,
+          {
+            params: {
+              contract_address: contractAddress,
+              from_updated_at: fromTimestamp,
+            },
+            headers: { Accept: "application/json" },
+          }
+        );
+
+        if (data.result?.length >= 3) return data.result.slice(0, 3);
+      } catch (err) {
+        console.error("Error polling for NFTs:", err);
+      }
+
+      await new Promise((res) => setTimeout(res, delayMs));
+      tries++;
+    }
+
+    return [];
   };
 
-  const handleBurnPack = async (nft: NFT) => {
+  const handleOpenPack = async (nft: NFT) => {
+    setOpeningPack(nft);
+    setShowCards(false);
+    setRevealedAliens([]);
     setBurningTokenId(nft.token_id);
     setBurnError(null);
+
+    const userAddress = nfts[0]?.contractAddress;
+    const alienContract = "0x0b0c90da7d6c8a170cf3ef8e9f4ebe53682d3671";
+    const fromTimestamp = new Date().toISOString();
+
     try {
       const burnTx = await burnNFT(nft.token_id);
-      if (burnTx) {
-        console.log("🔥 Burned NFT", burnTx);
-        setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
-      }
+      if (!burnTx) throw new Error("Burn failed");
+
+      setTimeout(() => {
+        videoRef.current?.play();
+      }, 100);
+
+      const newAliens = await pollForNewAliens(
+        userAddress,
+        alienContract,
+        fromTimestamp
+      );
+
+      setRevealedAliens(newAliens);
+      setShowCards(true);
+      setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
     } catch (err: any) {
-      console.error("Burn failed:", err);
-      setBurnError(err.message || "Burn failed");
+      console.error("Open pack error:", err);
+      setBurnError(err.message || "Failed to open pack");
     } finally {
       setBurningTokenId(null);
     }
-  };
-
-  const handleVideoEnded = () => {
-    setShowCards(true);
-  };
-
-  const handleDialogClose = () => {
-    setOpeningPack(null);
-    setShowCards(false);
   };
 
   return (
@@ -134,24 +175,12 @@ export function Inventory() {
                   <p className="font-semibold">{nft.name}</p>
 
                   {nft.collection === "pack" && (
-                    <>
-                      <Button
-                        className="mt-2"
-                        onClick={() => handleOpenPack(nft)}
-                      >
-                        🎁 Open Pack
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        className="mt-2"
-                        disabled={burningTokenId !== null}
-                        onClick={() => handleBurnPack(nft)}
-                      >
-                        {burningTokenId === nft.token_id
-                          ? "Burning..."
-                          : "🔥 Burn"}
-                      </Button>
-                    </>
+                    <Button
+                      className="mt-2"
+                      onClick={() => handleOpenPack(nft)}
+                    >
+                      🎁 Open Pack
+                    </Button>
                   )}
 
                   {nft.collection === "alien" && (
@@ -174,8 +203,10 @@ export function Inventory() {
         </CardContent>
       </Card>
 
-      {/* Pack Opening Dialog */}
-      <Dialog open={openingPack !== null} onOpenChange={handleDialogClose}>
+      <Dialog
+        open={openingPack !== null}
+        onOpenChange={() => setOpeningPack(null)}
+      >
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
             <video
@@ -187,7 +218,6 @@ export function Inventory() {
               autoPlay
               loop={false}
               controls={false}
-              onEnded={handleVideoEnded}
               key={openingPack?.token_id}
             />
           )}
@@ -195,7 +225,7 @@ export function Inventory() {
             {showCards && (
               <div className="p-8 bg-background">
                 <div className="grid grid-cols-3 gap-4">
-                  {[1, 2, 3].map((_, index) => (
+                  {revealedAliens.map((alien, index) => (
                     <motion.div
                       key={index}
                       initial={{ scale: 0, rotate: -180 }}
@@ -211,13 +241,13 @@ export function Inventory() {
                         <CardContent className="p-3">
                           <div className="aspect-square rounded bg-secondary flex items-center justify-center mb-2">
                             <img
-                              src="/placeholder.svg?height=200&width=200"
-                              alt="Alien Placeholder"
+                              src={alien.image || "/placeholder.svg"}
+                              alt={alien.name}
                               className="w-full h-full object-cover rounded"
                             />
                           </div>
                           <p className="text-sm font-semibold text-center">
-                            Alien #{index + 1}
+                            {alien.name}
                           </p>
                         </CardContent>
                       </Card>
@@ -230,7 +260,6 @@ export function Inventory() {
         </DialogContent>
       </Dialog>
 
-      {/* Alien Info Modal */}
       <Dialog
         open={selectedNFTForInfo !== null}
         onOpenChange={() => setSelectedNFTForInfo(null)}
