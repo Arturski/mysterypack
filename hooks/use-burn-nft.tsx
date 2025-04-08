@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ethers, BigNumber } from "ethers";
-import { ImmutableERC721Abi } from "@imtbl/contracts";
+import { BrowserProvider, Contract } from "ethers";
 import { passportInstance } from "@/app/utils/setupDefault";
 
 interface BurnNFTParams {
@@ -12,15 +11,16 @@ interface BurnNFTParams {
 export function useBurnNFT({ contractAddress }: BurnNFTParams) {
   const [isBurning, setIsBurning] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [provider, setProvider] = useState<any>(null);
+  const [provider, setProvider] = useState<BrowserProvider | null>(null);
 
   useEffect(() => {
     const connectPassport = async () => {
       try {
-        const passportProvider = await passportInstance.connectEvm();
-        setProvider(new ethers.providers.Web3Provider(passportProvider));
-      } catch (error) {
-        console.error("Error connecting to Passport:", error);
+        const passportProvider = await passportInstance.connectEvm(); // EIP-1193 provider
+        const ethersProvider = new BrowserProvider(passportProvider); // ethers v6
+        setProvider(ethersProvider);
+      } catch (err) {
+        console.error("❌ Error connecting to Passport:", err);
         setError("Failed to connect to Passport");
       }
     };
@@ -37,20 +37,27 @@ export function useBurnNFT({ contractAddress }: BurnNFTParams) {
     setError(null);
 
     try {
-      const signer = provider.getSigner();
-      const contract = new ethers.Contract(
+      const signer = await provider.getSigner();
+      const sender = await signer.getAddress();
+
+      const contract = new Contract(
         contractAddress,
-        ImmutableERC721Abi,
+        ["function burn(address account, uint256 id, uint256 value)"],
         signer
       );
 
-      const tx = await contract.burn(BigNumber.from(tokenId));
-      await tx.wait();
-      console.log("Burn successful, tx hash:", tx.hash);
+      console.log("🔥 Burning token...");
+      console.log("account:", sender, "id:", tokenId, "value: 1");
+
+      const tx = await contract.burn(sender, BigInt(tokenId), BigInt(1));
+      console.log("📨 Transaction sent. Waiting for confirmation:", tx.hash);
+      await provider.waitForTransaction(tx.hash);
+
+      console.log("✅ Burn successful:", tx.hash);
       return tx.hash;
-    } catch (error: any) {
-      console.error("Error burning NFT:", error);
-      setError(error.message);
+    } catch (err: any) {
+      console.error("❌ Error burning NFT:", err);
+      setError(err.message || "Unknown error");
     } finally {
       setIsBurning(false);
     }

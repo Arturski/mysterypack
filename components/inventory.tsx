@@ -2,14 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Package, Wallet, ArrowRightLeft, Coins } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchInventory } from "@/lib/api";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
@@ -39,12 +32,15 @@ export function Inventory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openingPack, setOpeningPack] = useState<NFT | null>(null);
-  const [isVideoLoaded, setIsVideoLoaded] = useState(false);
   const [showCards, setShowCards] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
+  const [burningTokenId, setBurningTokenId] = useState<string | null>(null);
+  const [burnError, setBurnError] = useState<string | null>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  const { burnNFT, isBurning, error: burnError } = useBurnNFT();
+  const { burnNFT, isBurning } = useBurnNFT({
+    contractAddress: "0xb001670b074140aa6942fbf62539562c65843719", // ✅ Replace with your actual contract address
+  });
 
   useEffect(() => {
     loadInventory();
@@ -55,7 +51,7 @@ export function Inventory() {
     try {
       const data = await fetchInventory();
       setNfts(data || []);
-    } catch (err) {
+    } catch (err: any) {
       setError(err.message);
     } finally {
       setLoading(false);
@@ -69,17 +65,36 @@ export function Inventory() {
     return true;
   });
 
-  const handleOpenPack = async (nft: NFT) => {
-    console.log("Burning NFT before opening pack...");
-    const burnTx = await burnNFT(nft);
-    if (burnTx) {
-      console.log("Burn confirmed, starting video...");
-      setOpeningPack(nft);
+  const handleOpenPack = (nft: NFT) => {
+    setShowCards(false);
+    setOpeningPack(nft);
+  };
+
+  const handleBurnPack = async (nft: NFT) => {
+    setBurningTokenId(nft.token_id);
+    setBurnError(null);
+    try {
+      const burnTx = await burnNFT(nft.token_id);
+      if (burnTx) {
+        console.log("🔥 Burned NFT", burnTx);
+        // Optionally remove from local list:
+        setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
+      }
+    } catch (err: any) {
+      console.error("Burn failed:", err);
+      setBurnError(err.message || "Burn failed");
+    } finally {
+      setBurningTokenId(null);
     }
   };
 
   const handleVideoEnded = () => {
     setShowCards(true);
+  };
+
+  const handleDialogClose = () => {
+    setOpeningPack(null);
+    setShowCards(false);
   };
 
   return (
@@ -114,12 +129,25 @@ export function Inventory() {
                     className="w-full h-full object-cover rounded"
                   />
                   <p>{nft.name}</p>
-                  <Button
-                    disabled={isBurning}
-                    onClick={() => handleOpenPack(nft)}
-                  >
-                    {isBurning ? "Burning..." : "Open Pack"}
+                  <Button className="mb-2" onClick={() => handleOpenPack(nft)}>
+                    Open Pack
                   </Button>
+
+                  {nft.collection === "pack" && (
+                    <Button
+                      variant="destructive"
+                      disabled={burningTokenId !== null}
+                      onClick={() => handleBurnPack(nft)}
+                    >
+                      {burningTokenId === nft.token_id
+                        ? "Burning..."
+                        : "🔥 Burn"}
+                    </Button>
+                  )}
+
+                  {burnError && burningTokenId === nft.token_id && (
+                    <p className="text-red-500 text-sm mt-2">{burnError}</p>
+                  )}
                 </CardContent>
               </Card>
             ))}
@@ -127,7 +155,7 @@ export function Inventory() {
         </CardContent>
       </Card>
 
-      <Dialog open={openingPack !== null}>
+      <Dialog open={openingPack !== null} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
             <video
@@ -140,6 +168,7 @@ export function Inventory() {
               loop={false}
               controls={false}
               onEnded={handleVideoEnded}
+              key={openingPack?.token_id}
             />
           )}
           <AnimatePresence>
