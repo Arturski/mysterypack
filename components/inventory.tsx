@@ -121,8 +121,10 @@ export function Inventory() {
       if (!burnTx) throw new Error("Burn failed");
 
       setTimeout(() => {
-        videoRef.current?.play();
-      }, 100);
+        if (videoRef.current) {
+          videoRef.current.play();
+        }
+      }, 500);
 
       const newAliens = await pollForNewAliens(
         userAddress,
@@ -222,6 +224,15 @@ export function Inventory() {
             />
           )}
           <AnimatePresence>
+            {showCards === false && (
+              <div className="p-8 bg-background text-center text-white">
+                <p className="text-lg mb-4 animate-pulse">
+                  Scanning the universe for new aliens...
+                </p>
+                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+              </div>
+            )}
+
             {showCards && (
               <div className="p-8 bg-background">
                 <div className="grid grid-cols-3 gap-4">
