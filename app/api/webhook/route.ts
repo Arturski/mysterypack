@@ -4,9 +4,11 @@ import axios from "axios";
 import { faker } from "@faker-js/faker";
 import { blockchainData } from "@imtbl/sdk";
 import { client } from "@/lib/client";
+import { randomUUID } from "crypto";
 
 const BASE_IMAGE_URL =
   "https://raw.githubusercontent.com/Arturski/public-static/main/demo/aliens/";
+
 const imagePool = {
   Common: [
     "c1.webp",
@@ -82,13 +84,13 @@ function generateAlienMetadata(tokenId: number) {
   };
 }
 
-async function mintAliens(to: string, reference: string) {
+async function mintAliens(to: string, referencePrefix: string) {
   const now = Date.now();
   const assets = [1, 2, 3].map((offset) => {
     const metadata = generateAlienMetadata(now + offset);
     return {
       owner_address: to,
-      reference_id: reference,
+      reference_id: `${referencePrefix}-${randomUUID()}`, // ✅ ensures uniqueness
       token_id: metadata.token_id,
       metadata,
     };
@@ -135,17 +137,17 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
         if (event.event_name === "imtbl_zkevm_activity_burn") {
           const { token_id, contract_address } = event.data.details.asset;
           const from = event.data.details.from;
-          const reference = `burn-${token_id}`;
+          const referencePrefix = `burn-${token_id}`;
 
           console.log("\n🔥 Burn Event Received:");
           console.log("───────────────────────────────");
           console.log(`🔹 From:     ${from}`);
           console.log(`🔹 Token ID: ${token_id}`);
           console.log(`🔹 Contract: ${contract_address}`);
-          console.log(`🔹 Mint Ref: ${reference}`);
+          console.log(`🔹 Mint Ref: ${referencePrefix}`);
           console.log("───────────────────────────────\n");
 
-          await mintAliens(from, reference);
+          await mintAliens(from, referencePrefix);
         } else {
           console.log("📦 Event Received:", event.event_name);
         }
