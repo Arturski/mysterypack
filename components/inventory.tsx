@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { fetchInventory } from "@/lib/api";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Select,
@@ -14,6 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useBurnNFT } from "@/hooks/use-burn-nft";
+import { Label } from "@/components/ui/label";
 
 interface NFT {
   token_id: string;
@@ -32,6 +33,9 @@ export function Inventory() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [openingPack, setOpeningPack] = useState<NFT | null>(null);
+  const [selectedNFTForInfo, setSelectedNFTForInfo] = useState<NFT | null>(
+    null
+  );
   const [showCards, setShowCards] = useState(false);
   const [filter, setFilter] = useState<FilterType>("all");
   const [burningTokenId, setBurningTokenId] = useState<string | null>(null);
@@ -39,7 +43,7 @@ export function Inventory() {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const { burnNFT, isBurning } = useBurnNFT({
-    contractAddress: "0xb001670b074140aa6942fbf62539562c65843719", // ✅ Replace with your actual contract address
+    contractAddress: "0xb001670b074140aa6942fbf62539562c65843719",
   });
 
   useEffect(() => {
@@ -77,7 +81,6 @@ export function Inventory() {
       const burnTx = await burnNFT(nft.token_id);
       if (burnTx) {
         console.log("🔥 Burned NFT", burnTx);
-        // Optionally remove from local list:
         setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
       }
     } catch (err: any) {
@@ -126,22 +129,38 @@ export function Inventory() {
                   <img
                     src={nft.image || "/placeholder.svg"}
                     alt={nft.name}
-                    className="w-full h-full object-cover rounded"
+                    className="w-full h-full object-cover rounded mb-2"
                   />
-                  <p>{nft.name}</p>
-                  <Button className="mb-2" onClick={() => handleOpenPack(nft)}>
-                    Open Pack
-                  </Button>
+                  <p className="font-semibold">{nft.name}</p>
 
                   {nft.collection === "pack" && (
+                    <>
+                      <Button
+                        className="mt-2"
+                        onClick={() => handleOpenPack(nft)}
+                      >
+                        🎁 Open Pack
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        className="mt-2"
+                        disabled={burningTokenId !== null}
+                        onClick={() => handleBurnPack(nft)}
+                      >
+                        {burningTokenId === nft.token_id
+                          ? "Burning..."
+                          : "🔥 Burn"}
+                      </Button>
+                    </>
+                  )}
+
+                  {nft.collection === "alien" && (
                     <Button
-                      variant="destructive"
-                      disabled={burningTokenId !== null}
-                      onClick={() => handleBurnPack(nft)}
+                      variant="secondary"
+                      className="mt-2"
+                      onClick={() => setSelectedNFTForInfo(nft)}
                     >
-                      {burningTokenId === nft.token_id
-                        ? "Burning..."
-                        : "🔥 Burn"}
+                      ℹ️ Info
                     </Button>
                   )}
 
@@ -155,6 +174,7 @@ export function Inventory() {
         </CardContent>
       </Card>
 
+      {/* Pack Opening Dialog */}
       <Dialog open={openingPack !== null} onOpenChange={handleDialogClose}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
@@ -207,6 +227,38 @@ export function Inventory() {
               </div>
             )}
           </AnimatePresence>
+        </DialogContent>
+      </Dialog>
+
+      {/* Alien Info Modal */}
+      <Dialog
+        open={selectedNFTForInfo !== null}
+        onOpenChange={() => setSelectedNFTForInfo(null)}
+      >
+        <DialogContent className="max-w-lg p-6">
+          {selectedNFTForInfo && (
+            <>
+              <DialogTitle>{selectedNFTForInfo.name}</DialogTitle>
+              <img
+                src={selectedNFTForInfo.image}
+                alt={selectedNFTForInfo.name}
+                className="w-full h-auto rounded my-4"
+              />
+              <p className="text-sm text-muted-foreground mb-2">
+                {selectedNFTForInfo.description}
+              </p>
+              <div className="space-y-1 text-sm">
+                <Label>Token ID:</Label>
+                <p>{selectedNFTForInfo.token_id}</p>
+                <Label>Collection:</Label>
+                <p>{selectedNFTForInfo.collection}</p>
+                <Label>Contract Address:</Label>
+                <p className="break-all">
+                  {selectedNFTForInfo.contractAddress}
+                </p>
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </>
