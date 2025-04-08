@@ -50,6 +50,7 @@
     "date-fns": "^2.29.3",
     "embla-carousel-react": "8.5.1",
     "ethers": "^6",
+    "faker-js": "^1.0.0",
     "framer-motion": "latest",
     "input-otp": "1.4.1",
     "lucide-react": "^0.476.0",
