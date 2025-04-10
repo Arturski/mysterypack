@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/select";
 import { useBurnNFT } from "@/hooks/use-burn-nft";
 import { Label } from "@/components/ui/label";
+import { EIP1193Context } from "@/app/context/EIP1193Context";
 
 interface NFT {
   token_id: string;
@@ -42,6 +43,7 @@ export function Inventory() {
   const [filter, setFilter] = useState<FilterType>("all");
   const [burningTokenId, setBurningTokenId] = useState<string | null>(null);
   const [burnError, setBurnError] = useState<string | null>(null);
+  const { walletAddress } = useContext(EIP1193Context);
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const { burnNFT } = useBurnNFT({
@@ -79,7 +81,6 @@ export function Inventory() {
     delayMs = 2000
   ): Promise<NFT[]> => {
     let tries = 0;
-
     while (tries < maxTries) {
       try {
         const { data } = await axios.get(
@@ -92,16 +93,13 @@ export function Inventory() {
             headers: { Accept: "application/json" },
           }
         );
-
         if (data.result?.length >= 3) return data.result.slice(0, 3);
       } catch (err) {
         console.error("Error polling for NFTs:", err);
       }
-
       await new Promise((res) => setTimeout(res, delayMs));
       tries++;
     }
-
     return [];
   };
 
@@ -112,7 +110,6 @@ export function Inventory() {
     setBurningTokenId(nft.token_id);
     setBurnError(null);
 
-    const userAddress = nfts[0]?.contractAddress;
     const alienContract = "0x0b0c90da7d6c8a170cf3ef8e9f4ebe53682d3671";
     const fromTimestamp = new Date().toISOString();
 
@@ -120,14 +117,14 @@ export function Inventory() {
       const burnTx = await burnNFT(nft.token_id);
       if (!burnTx) throw new Error("Burn failed");
 
+      // 🎬 Start video after burn is submitted
       setTimeout(() => {
-        if (videoRef.current) {
-          videoRef.current.play();
-        }
+        videoRef.current?.play();
       }, 500);
 
+      // 🔁 Poll for 3 new aliens
       const newAliens = await pollForNewAliens(
-        userAddress,
+        walletAddress,
         alienContract,
         fromTimestamp
       );
@@ -211,28 +208,27 @@ export function Inventory() {
       >
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
-            <video
-              ref={videoRef}
-              src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
-              className="w-full h-full"
-              playsInline
-              muted
-              autoPlay
-              loop={false}
-              controls={false}
-              key={openingPack?.token_id}
-            />
-          )}
-          <AnimatePresence>
-            {showCards === false && (
+            <>
+              <video
+                ref={videoRef}
+                src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
+                className="w-full h-full"
+                playsInline
+                muted
+                autoPlay
+                loop={true}
+                controls={false}
+                key={openingPack?.token_id}
+              />
               <div className="p-8 bg-background text-center text-white">
                 <p className="text-lg mb-4 animate-pulse">
                   Scanning the universe for new aliens...
                 </p>
                 <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" />
               </div>
-            )}
-
+            </>
+          )}
+          <AnimatePresence>
             {showCards && (
               <div className="p-8 bg-background">
                 <div className="grid grid-cols-3 gap-4">
