@@ -1,3 +1,5 @@
+"use client"; // ✅ REQUIRED to allow useEffect, useState, etc.
+
 import { createContext, useEffect, useState } from "react";
 import { Web3Provider } from "@ethersproject/providers";
 
@@ -12,48 +14,50 @@ export interface EIP1193ContextState {
 export const EIP1193Context = createContext<EIP1193ContextState>({
   provider: undefined,
   setProvider: () => {},
-  walletAddress: '',
+  walletAddress: "",
   setWalletAddress: () => {},
-  isPassportProvider: false
+  isPassportProvider: false,
 });
 
-interface EIP1193ContextProvider { 
+interface EIP1193ContextProviderProps {
   children: React.ReactNode;
 }
-export const EIP1193ContextProvider = ({children}: EIP1193ContextProvider) => {
+
+export const EIP1193ContextProvider = ({
+  children,
+}: EIP1193ContextProviderProps) => {
   const [provider, setProvider] = useState<Web3Provider | undefined>();
-  const [walletAddress, setWalletAddress] = useState('');
+  const [walletAddress, setWalletAddress] = useState("");
   const [isPassport, setIsPassport] = useState(false);
 
   useEffect(() => {
-    if(!provider) {
-      setWalletAddress('');
+    if (!provider) {
+      setWalletAddress("");
       setIsPassport(false);
       return;
     }
-    
-    const setProviderDetails = async () => {
-      const address = await provider?.getSigner().getAddress();
-      setWalletAddress(address);
 
+    const fetchAddress = async () => {
+      const address = await provider.getSigner().getAddress();
+      setWalletAddress(address);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      setIsPassport((provider?.provider as any)?.isPassport === true);
-    }
-    setProviderDetails();
+      setIsPassport((provider.provider as any)?.isPassport === true);
+    };
+
+    fetchAddress();
   }, [provider]);
 
   return (
-    <EIP1193Context.Provider value={{
-      provider, 
-      setProvider,
-      walletAddress,
-      setWalletAddress,
-      isPassportProvider: isPassport,
-      }}>
+    <EIP1193Context.Provider
+      value={{
+        provider,
+        setProvider,
+        walletAddress,
+        setWalletAddress,
+        isPassportProvider: isPassport,
+      }}
+    >
       {children}
     </EIP1193Context.Provider>
-  )
-
-}
-
-
+  );
+};
