@@ -36,12 +36,12 @@ export async function fetchInventory() {
       }
     );
 
-    const packs = (packsResponse.data.result || []).map((nft) => ({
+    const packs = (packsResponse.data.result || []).map((nft: any) => ({
       ...nft,
       collection: "pack",
     }));
 
-    const aliens = (aliensResponse.data.result || []).map((nft) => ({
+    const aliens = (aliensResponse.data.result || []).map((nft: any) => ({
       ...nft,
       collection: "alien",
     }));
@@ -50,7 +50,7 @@ export async function fetchInventory() {
     console.log("Aliens:", aliens);
 
     return [...packs, ...aliens];
-  } catch (error) {
+  } catch (error: any) {
     console.error("API Error:", error);
     throw new Error(
       error.response?.data?.message || "Failed to fetch inventory"
