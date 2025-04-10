@@ -43,6 +43,7 @@ export function Inventory() {
   const [filter, setFilter] = useState<FilterType>("all");
   const [burningTokenId, setBurningTokenId] = useState<string | null>(null);
   const [burnError, setBurnError] = useState<string | null>(null);
+  const [isVideoReady, setIsVideoReady] = useState(false);
   const { walletAddress } = useContext(EIP1193Context);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -103,12 +104,17 @@ export function Inventory() {
     return [];
   };
 
+  const handleVideoEnded = () => {
+    setShowCards(true);
+  };
+
   const handleOpenPack = async (nft: NFT) => {
     setOpeningPack(nft);
     setShowCards(false);
     setRevealedAliens([]);
     setBurningTokenId(nft.token_id);
     setBurnError(null);
+    setIsVideoReady(false);
 
     const alienContract = "0x0b0c90da7d6c8a170cf3ef8e9f4ebe53682d3671";
     const fromTimestamp = new Date().toISOString();
@@ -117,12 +123,6 @@ export function Inventory() {
       const burnTx = await burnNFT(nft.token_id);
       if (!burnTx) throw new Error("Burn failed");
 
-      // 🎬 Start video after burn is submitted
-      setTimeout(() => {
-        videoRef.current?.play();
-      }, 500);
-
-      // 🔁 Poll for 3 new aliens
       const newAliens = await pollForNewAliens(
         walletAddress,
         alienContract,
@@ -130,8 +130,13 @@ export function Inventory() {
       );
 
       setRevealedAliens(newAliens);
-      setShowCards(true);
       setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
+
+      // ✅ Now start video playback
+      setTimeout(() => {
+        videoRef.current?.play();
+      }, 300);
+      setIsVideoReady(true);
     } catch (err: any) {
       console.error("Open pack error:", err);
       setBurnError(err.message || "Failed to open pack");
@@ -209,23 +214,27 @@ export function Inventory() {
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
             <>
-              <video
-                ref={videoRef}
-                src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
-                className="w-full h-full"
-                playsInline
-                muted
-                autoPlay
-                loop={true}
-                controls={false}
-                key={openingPack?.token_id}
-              />
-              <div className="p-8 bg-background text-center text-white">
-                <p className="text-lg mb-4 animate-pulse">
-                  Scanning the universe for new aliens...
-                </p>
-                <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" />
-              </div>
+              {isVideoReady ? (
+                <video
+                  ref={videoRef}
+                  src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
+                  className="w-full h-full"
+                  playsInline
+                  muted
+                  autoPlay
+                  loop={false}
+                  controls={false}
+                  onEnded={handleVideoEnded}
+                  key={openingPack?.token_id}
+                />
+              ) : (
+                <div className="p-8 bg-background text-center text-white">
+                  <p className="text-lg mb-4 animate-pulse">
+                    Scanning the universe for new aliens...
+                  </p>
+                  <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" />
+                </div>
+              )}
             </>
           )}
           <AnimatePresence>
