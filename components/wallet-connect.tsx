@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Wallet } from "lucide-react";
 import { passportInstance } from "../app/utils/setupDefault";
+import { EIP1193Context } from "@/app/context/EIP1193Context";
 
 interface WalletConnectProps {
   onWalletConnect: (walletAddress: string | null) => void;
@@ -18,6 +19,7 @@ interface WalletConnectProps {
 export function WalletConnect({ onWalletConnect }: WalletConnectProps) {
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [accountAddress, setAccountAddress] = useState<string | null>(null);
+  const { setWalletAddress } = useContext(EIP1193Context); // ✅ Access context
 
   // Auto-connect Passport wallet
   useEffect(() => {
@@ -30,7 +32,8 @@ export function WalletConnect({ onWalletConnect }: WalletConnectProps) {
         if (accounts && accounts.length > 0) {
           setIsLoggedIn(true);
           setAccountAddress(accounts[0]);
-          onWalletConnect(accounts[0]); // Send address to parent component
+          setWalletAddress(accounts[0]); // ✅ Store in context
+          onWalletConnect(accounts[0]);
         }
       } catch (error) {
         console.error("Error fetching Passport accounts:", error);
@@ -38,9 +41,8 @@ export function WalletConnect({ onWalletConnect }: WalletConnectProps) {
     };
 
     connectPassport();
-  }, [onWalletConnect]);
+  }, [onWalletConnect, setWalletAddress]);
 
-  // Handle wallet connection
   const loginWithPassport = async () => {
     if (!passportInstance) return;
     try {
@@ -52,20 +54,21 @@ export function WalletConnect({ onWalletConnect }: WalletConnectProps) {
       if (accounts && accounts.length > 0) {
         setIsLoggedIn(true);
         setAccountAddress(accounts[0]);
-        onWalletConnect(accounts[0]); // Send address to parent component
+        setWalletAddress(accounts[0]); // ✅ Store in context
+        onWalletConnect(accounts[0]);
       }
     } catch (error) {
       console.error("Error connecting to Passport:", error);
     }
   };
 
-  // Handle logout
   const logout = async () => {
     try {
       await passportInstance.logout();
       setIsLoggedIn(false);
       setAccountAddress(null);
-      onWalletConnect(null); // Send null to parent component on logout
+      setWalletAddress(""); // ✅ Clear context
+      onWalletConnect(null);
     } catch (error) {
       console.error("Error during logout:", error);
     }
