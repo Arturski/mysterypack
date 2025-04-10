@@ -1,4 +1,4 @@
-"use client"; // ✅ REQUIRED to allow useEffect, useState, etc.
+"use client";
 
 import { createContext, useEffect, useState } from "react";
 import { Web3Provider } from "@ethersproject/providers";
@@ -37,14 +37,14 @@ export const EIP1193ContextProvider = ({
       return;
     }
 
-    const fetchAddress = async () => {
+    const setProviderDetails = async () => {
       const address = await provider.getSigner().getAddress();
       setWalletAddress(address);
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setIsPassport((provider.provider as any)?.isPassport === true);
     };
 
-    fetchAddress();
+    setProviderDetails();
   }, [provider]);
 
   return (

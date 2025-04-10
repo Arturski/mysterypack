@@ -1,10 +1,9 @@
-import type React from "react";
+"use client";
+
 import type { Metadata } from "next";
 import { Space_Grotesk } from "next/font/google";
 import "./globals.css";
-
-// ✅ Import your wallet context provider
-import { EIP1193ContextProvider } from "@/app/context/EIP1193Context";
+import { EIP1193ContextProvider } from "./context/EIP1193Context"; // ✅ import context
 
 const spaceGrotesk = Space_Grotesk({ subsets: ["latin"] });
 
@@ -22,6 +21,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="dark">
       <body className={`${spaceGrotesk.className} bg-[#050B17]`}>
+        {/* ✅ wrap with provider */}
         <EIP1193ContextProvider>{children}</EIP1193ContextProvider>
       </body>
     </html>
