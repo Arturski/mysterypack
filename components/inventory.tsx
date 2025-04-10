@@ -74,6 +74,9 @@ export function Inventory() {
     return true;
   });
 
+  console.log(
+    `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`
+  );
   const pollForNewAliens = async (
     walletAddress: string,
     contractAddress: string,
