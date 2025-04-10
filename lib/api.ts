@@ -104,7 +104,7 @@ export async function mintPack() {
 
     console.log("Mint Response:", response.data);
     return response.data;
-  } catch (error) {
+  } catch (error: any) {
     console.error("Mint Error:", error.response?.data || error);
     throw new Error(error.response?.data?.message || "Failed to mint pack");
   }
