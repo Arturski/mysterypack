@@ -33,7 +33,7 @@ type FilterType = "all" | "packs" | "aliens";
 export function Inventory() {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [openingPack, setOpeningPack] = useState<NFT | null>(null);
   const [selectedNFTForInfo, setSelectedNFTForInfo] = useState<NFT | null>(
     null
@@ -44,6 +44,7 @@ export function Inventory() {
   const [burningTokenId, setBurningTokenId] = useState<string | null>(null);
   const [burnError, setBurnError] = useState<string | null>(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
+
   const { walletAddress } = useContext(EIP1193Context);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -52,13 +53,14 @@ export function Inventory() {
   });
 
   useEffect(() => {
-    loadInventory();
-  }, []);
+    if (!walletAddress) return;
+    loadInventory(walletAddress);
+  }, [walletAddress]);
 
-  const loadInventory = async () => {
+  const loadInventory = async (address: string) => {
     setLoading(true);
     try {
-      const data = await fetchInventory();
+      const data = await fetchInventory(address);
       setNfts(data || []);
     } catch (err: any) {
       setError(err.message);
@@ -74,9 +76,6 @@ export function Inventory() {
     return true;
   });
 
-  console.log(
-    `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`
-  );
   const pollForNewAliens = async (
     walletAddress: string,
     contractAddress: string,
@@ -131,7 +130,7 @@ export function Inventory() {
     try {
       const burnTx = await burnNFT(nft.token_id);
       if (!burnTx) throw new Error("Burn failed");
-      console.log("📦 Connected Wallet Address (from context):", walletAddress);
+
       const newAliens = await pollForNewAliens(
         walletAddress,
         alienContract,
@@ -153,6 +152,14 @@ export function Inventory() {
       setBurningTokenId(null);
     }
   };
+
+  if (!walletAddress) {
+    return (
+      <div className="text-center py-8 text-white">
+        <p>Please connect your wallet to view your inventory.</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -216,6 +223,7 @@ export function Inventory() {
         </CardContent>
       </Card>
 
+      {/* Pack Opening Modal */}
       <Dialog
         open={openingPack !== null}
         onOpenChange={() => setOpeningPack(null)}
@@ -285,6 +293,7 @@ export function Inventory() {
         </DialogContent>
       </Dialog>
 
+      {/* NFT Info Modal */}
       <Dialog
         open={selectedNFTForInfo !== null}
         onOpenChange={() => setSelectedNFTForInfo(null)}
