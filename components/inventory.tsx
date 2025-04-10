@@ -112,6 +112,12 @@ export function Inventory() {
   };
 
   const handleOpenPack = async (nft: NFT) => {
+    if (!walletAddress) {
+      console.error("Wallet address is not yet available.");
+      setBurnError("Please connect your wallet before opening the pack.");
+      return;
+    }
+
     setOpeningPack(nft);
     setShowCards(false);
     setRevealedAliens([]);
@@ -125,7 +131,7 @@ export function Inventory() {
     try {
       const burnTx = await burnNFT(nft.token_id);
       if (!burnTx) throw new Error("Burn failed");
-
+      console.log("📦 Connected Wallet Address (from context):", walletAddress);
       const newAliens = await pollForNewAliens(
         walletAddress,
         alienContract,
@@ -135,10 +141,10 @@ export function Inventory() {
       setRevealedAliens(newAliens);
       setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
 
-      // ✅ Now start video playback
       setTimeout(() => {
         videoRef.current?.play();
       }, 300);
+
       setIsVideoReady(true);
     } catch (err: any) {
       console.error("Open pack error:", err);
