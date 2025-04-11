@@ -33,7 +33,7 @@ type FilterType = "all" | "packs" | "aliens";
 export function Inventory() {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState(null);
   const [openingPack, setOpeningPack] = useState<NFT | null>(null);
   const [selectedNFTForInfo, setSelectedNFTForInfo] = useState<NFT | null>(
     null
@@ -44,7 +44,6 @@ export function Inventory() {
   const [burningTokenId, setBurningTokenId] = useState<string | null>(null);
   const [burnError, setBurnError] = useState<string | null>(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
-
   const { walletAddress } = useContext(EIP1193Context);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -53,14 +52,13 @@ export function Inventory() {
   });
 
   useEffect(() => {
-    if (!walletAddress) return;
-    loadInventory(walletAddress);
-  }, [walletAddress]);
+    loadInventory();
+  }, []);
 
-  const loadInventory = async (address: string) => {
+  const loadInventory = async () => {
     setLoading(true);
     try {
-      const data = await fetchInventory(address);
+      const data = await fetchInventory(walletAddress);
       setNfts(data || []);
     } catch (err: any) {
       setError(err.message);
@@ -111,12 +109,6 @@ export function Inventory() {
   };
 
   const handleOpenPack = async (nft: NFT) => {
-    if (!walletAddress) {
-      console.error("Wallet address is not yet available.");
-      setBurnError("Please connect your wallet before opening the pack.");
-      return;
-    }
-
     setOpeningPack(nft);
     setShowCards(false);
     setRevealedAliens([]);
@@ -140,10 +132,10 @@ export function Inventory() {
       setRevealedAliens(newAliens);
       setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
 
+      // ✅ Now start video playback
       setTimeout(() => {
         videoRef.current?.play();
       }, 300);
-
       setIsVideoReady(true);
     } catch (err: any) {
       console.error("Open pack error:", err);
@@ -152,14 +144,6 @@ export function Inventory() {
       setBurningTokenId(null);
     }
   };
-
-  if (!walletAddress) {
-    return (
-      <div className="text-center py-8 text-white">
-        <p>Please connect your wallet to view your inventory.</p>
-      </div>
-    );
-  }
 
   return (
     <>
@@ -223,7 +207,6 @@ export function Inventory() {
         </CardContent>
       </Card>
 
-      {/* Pack Opening Modal */}
       <Dialog
         open={openingPack !== null}
         onOpenChange={() => setOpeningPack(null)}
@@ -293,7 +276,6 @@ export function Inventory() {
         </DialogContent>
       </Dialog>
 
-      {/* NFT Info Modal */}
       <Dialog
         open={selectedNFTForInfo !== null}
         onOpenChange={() => setSelectedNFTForInfo(null)}
