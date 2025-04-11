@@ -1,102 +1,149 @@
 "use client";
 
-import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
+import { useState, useContext } from "react";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Gift, Package, ExternalLink } from "lucide-react";
+import { motion } from "framer-motion";
+import { useToast } from "@/components/ui/use-toast";
+import { mintPack } from "@/lib/api";
+import { EIP1193Context } from "@/app/context/EIP1193Context";
 
-const API_KEY = "sk_imapik-test-i551Syy9kSUgToJ-uti5_baebac";
-const PACK_CONTRACT_ADDRESS = "0xb001670b074140aa6942fbf62539562c65843719";
-const ALIEN_CONTRACT_ADDRESS = "0x0b0c90da7d6c8a170cf3ef8e9f4ebe53682d3671";
-
-export async function fetchInventory(walletAddress: string) {
-  if (!walletAddress) {
-    throw new Error("Wallet address is required to fetch inventory.");
-  }
-
-  console.log("🔍 Fetching inventory for:", walletAddress);
-
-  try {
-    const [packsResponse, aliensResponse] = await Promise.all([
-      axios.get(
-        `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`,
-        {
-          params: { contract_address: PACK_CONTRACT_ADDRESS },
-          headers: { Accept: "application/json" },
-        }
-      ),
-      axios.get(
-        `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`,
-        {
-          params: { contract_address: ALIEN_CONTRACT_ADDRESS },
-          headers: { Accept: "application/json" },
-        }
-      ),
-    ]);
-
-    const packs = (packsResponse.data.result || []).map((nft: any) => ({
-      ...nft,
-      collection: "pack",
-    }));
-
-    const aliens = (aliensResponse.data.result || []).map((nft: any) => ({
-      ...nft,
-      collection: "alien",
-    }));
-
-    return [...packs, ...aliens];
-  } catch (error: any) {
-    console.error("❌ Inventory API Error:", error);
-    throw new Error(
-      error.response?.data?.message || "Failed to fetch inventory"
-    );
-  }
+interface MysteryPackProps {
+  onPackMinted?: () => void;
 }
 
-export async function mintPack(walletAddress: string) {
-  if (!walletAddress)
-    throw new Error("Wallet address is required for minting.");
+export function MysteryPack({ onPackMinted }: MysteryPackProps) {
+  const [isMinting, setIsMinting] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
+  const { toast } = useToast();
+  const { walletAddress } = useContext(EIP1193Context);
 
-  console.log("Starting mintPack for:", walletAddress);
+  const handleMintPack = async () => {
+    if (!walletAddress) {
+      toast({
+        title: "No wallet connected",
+        description: "Please connect your wallet to mint a pack.",
+        variant: "destructive",
+      });
+      return;
+    }
 
-  const randomTokenId = Math.floor(Math.random() * 1000000) + 1;
-  const referenceId = uuidv4();
+    setIsMinting(true);
+    try {
+      await mintPack(walletAddress);
+      setShowSuccess(true);
+      onPackMinted?.();
+    } catch (error) {
+      toast({
+        title: "Mint Failed",
+        description:
+          error instanceof Error ? error.message : "Something went wrong.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsMinting(false);
+    }
+  };
 
-  try {
-    const response = await axios.post(
-      `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/collections/${PACK_CONTRACT_ADDRESS}/nfts/mint-requests`,
-      {
-        assets: [
-          {
-            reference_id: referenceId,
-            owner_address: walletAddress,
-            token_id: randomTokenId.toString(),
-            amount: "1",
-            metadata: {
-              id: randomTokenId,
-              image:
-                "https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/alien-pack-cover.webp",
-              token_id: randomTokenId.toString(),
-              name: "Alien Mystery Pack",
-              description:
-                "Alien Mystery Pack contains 3 Aliens. Luck Probability Common: 55%, Rare 30%, Legendary 12%, Mythical 3%",
-              external_url:
-                "https://immutable-metadata-api.vercel.app/collections/9/nfts/1",
-            },
-          },
-        ],
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "x-immutable-api-key": API_KEY,
-        },
-      }
-    );
+  return (
+    <>
+      <Card className="bg-background/50 backdrop-blur-sm border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Package className="h-5 w-5 text-primary" />
+            Alien Mystery Pack
+          </CardTitle>
+          <CardDescription>
+            Mint mystery packs containing 3 random aliens with varying rarities!
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div className="aspect-square max-w-sm mx-auto rounded-lg bg-secondary/50 flex items-center justify-center relative overflow-hidden">
+              <motion.div
+                animate={{ rotate: 360 }}
+                transition={{
+                  duration: 20,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: "linear",
+                }}
+                className="absolute inset-0 bg-[conic-gradient(from_0deg,transparent_0_340deg,rgba(59,130,246,0.2)_360deg)] rounded-lg"
+              />
+              <img
+                src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/alien-pack-cover.webp"
+                alt="Alien Mystery Pack"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <Button
+              onClick={handleMintPack}
+              className="w-full"
+              size="lg"
+              disabled={isMinting || !walletAddress}
+            >
+              <Gift className="mr-2 h-4 w-4" />
+              {isMinting ? "Minting..." : "Mint Pack"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
 
-    console.log("✅ Mint Response:", response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error("❌ Mint Error:", error.response?.data || error);
-    throw new Error(error.response?.data?.message || "Failed to mint pack");
-  }
+      <Dialog open={showSuccess} onOpenChange={setShowSuccess}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <span className="text-2xl">🎉</span> Pack Minted Successfully!
+            </DialogTitle>
+            <DialogDescription>
+              Your Alien Mystery Pack has been minted and added to your wallet.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div className="p-4 rounded-lg bg-secondary/50">
+              <img
+                src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/alien-pack-cover.webp"
+                alt="Alien Mystery Pack"
+                className="w-32 h-32 mx-auto rounded-lg object-cover"
+              />
+            </div>
+            <div className="flex flex-col gap-3">
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setShowSuccess(false)}
+              >
+                Continue Minting
+              </Button>
+              <Button
+                className="w-full"
+                onClick={() => {
+                  window.open(
+                    "https://play.sandbox.immutable.com/collection/zkEvm/0xb001670b074140aa6942fbf62539562c65843719/",
+                    "_blank"
+                  );
+                }}
+              >
+                <ExternalLink className="mr-2 h-4 w-4" />
+                View in Immutable
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
 }
