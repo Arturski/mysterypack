@@ -55,10 +55,9 @@ export async function mintPack(walletAddress: string) {
   if (!walletAddress)
     throw new Error("Wallet address is required for minting.");
 
-  console.log("Starting mintPack for:", walletAddress);
-
-  const randomTokenId = Math.floor(Math.random() * 1000000) + 1;
   const referenceId = uuidv4();
+
+  console.log("🚀 Minting pack with auto-assigned token ID");
 
   try {
     const response = await axios.post(
@@ -68,15 +67,13 @@ export async function mintPack(walletAddress: string) {
           {
             reference_id: referenceId,
             owner_address: walletAddress,
-            token_id: "1",
             amount: "1",
             metadata: {
+              name: "Alien Mystery Pack",
               image:
                 "https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/alien-pack-cover.webp",
-              token_id: randomTokenId.toString(),
-              name: "Alien Mystery Pack",
               description:
-                "Alien Mystery Pack contains 3 Aliens. Luck Probability Common: 55%, Rare 30%, Legendary 12%, Mythical 3%",
+                "Alien Mystery Pack contains 3 Aliens. Luck Probability: Common 55%, Rare 30%, Legendary 12%, Mythical 3%",
               external_url:
                 "https://immutable-metadata-api.vercel.app/collections/9/nfts/1",
             },
