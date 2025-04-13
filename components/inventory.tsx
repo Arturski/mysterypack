@@ -169,7 +169,12 @@ export function Inventory() {
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
             {filteredNfts.map((nft) => (
-              <Card key={nft.token_id}>
+              <Card key={nft.token_id} className="relative">
+                {parseInt(nft.balance) > 1 && (
+                  <div className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-0.5 rounded-full shadow-md z-10">
+                    x{nft.balance}
+                  </div>
+                )}
                 <CardContent>
                   <img
                     src={nft.image || "/placeholder.svg"}
