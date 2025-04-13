@@ -66,15 +66,6 @@ export async function POST(request: Request) {
               owner_address: walletAddress,
               token_id: "1",
               amount: "1",
-              metadata: {
-                name: "Alien Mystery Pack",
-                image:
-                  "https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/alien-pack-cover.webp",
-                description:
-                  "Alien Mystery Pack contains 3 Aliens. Luck Probability: Common 55%, Rare 30%, Legendary 12%, Mythical 3%",
-                external_url:
-                  "https://immutable-metadata-api.vercel.app/collections/9/nfts/1",
-              },
             },
           ],
         },
