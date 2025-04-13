@@ -51,49 +51,21 @@ export async function fetchInventory(walletAddress: string) {
   }
 }
 
+// lib/api.ts
 export async function mintPack(walletAddress: string) {
-  if (!walletAddress)
-    throw new Error("Wallet address is required for minting.");
+  const res = await fetch("/api/mint", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ walletAddress }),
+  });
 
-  const referenceId = uuidv4();
+  const data = await res.json();
 
-  console.log("🚀 Minting pack with auto-assigned token ID");
-
-  try {
-    const response = await axios.post(
-      `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/collections/${PACK_CONTRACT_ADDRESS}/nfts/mint-requests`,
-      {
-        assets: [
-          {
-            reference_id: referenceId,
-            owner_address: walletAddress,
-            amount: "1",
-            token_id: "1",
-            metadata: {
-              name: "Alien Mystery Pack",
-              image:
-                "https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/alien-pack-cover.webp",
-              description:
-                "Alien Mystery Pack contains 3 Aliens. Luck Probability: Common 55%, Rare 30%, Legendary 12%, Mythical 3%",
-              external_url:
-                "https://immutable-metadata-api.vercel.app/collections/9/nfts/1",
-            },
-          },
-        ],
-      },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "x-immutable-api-key": API_KEY,
-        },
-      }
-    );
-
-    console.log("✅ Mint Response:", response.data);
-    return response.data;
-  } catch (error: any) {
-    console.error("❌ Mint Error:", error.response?.data || error);
-    throw new Error(error.response?.data?.message || "Failed to mint pack");
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to mint pack");
   }
+
+  return data;
 }
