@@ -68,6 +68,7 @@ export async function mintPack(walletAddress: string) {
             reference_id: referenceId,
             owner_address: walletAddress,
             amount: "1",
+            token_id: "1",
             metadata: {
               name: "Alien Mystery Pack",
               image:
