@@ -200,13 +200,15 @@ export function Inventory() {
                 </div>
               )}
               <CardContent className="flex flex-col h-full justify-between">
-                <div className="flex-grow">
-                  <img
-                    src={nft.image || "/placeholder.svg"}
-                    alt={nft.name}
-                    className="w-full h-full object-cover rounded mb-2"
-                  />
-                  <p className="font-semibold mb-1 text-center">{nft.name}</p>
+                <div>
+                  <div className="aspect-square mb-2">
+                    <img
+                      src={nft.image || "/placeholder.svg"}
+                      alt={nft.name}
+                      className="w-full h-full object-cover rounded"
+                    />
+                  </div>
+                  <p className="font-semibold text-center">{nft.name}</p>
                   <p className="text-xs text-center text-muted-foreground">
                     {rarity}
                   </p>
