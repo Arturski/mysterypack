@@ -79,8 +79,8 @@ export function Inventory() {
     walletAddress: string,
     contractAddress: string,
     fromTimestamp: string,
-    maxTries = 30,
-    delayMs = 2000
+    maxTries = 120,
+    delayMs = 500
   ): Promise<NFT[]> => {
     let tries = 0;
     while (tries < maxTries) {
