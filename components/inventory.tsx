@@ -207,10 +207,10 @@ export function Inventory() {
                 <p className="text-xs text-center text-muted-foreground">
                   {rarity}
                 </p>
-                <div className="flex flex-col gap-2 mt-2">
+                <div className="flex gap-2 mt-2">
                   {nft.collection === "pack" && nft.token_id === "1" && (
                     <Button
-                      className="w-full"
+                      className="w-1/2"
                       onClick={() => handleOpenPack(nft)}
                     >
                       🎁 Open Pack
@@ -218,7 +218,7 @@ export function Inventory() {
                   )}
                   <Button
                     variant="secondary"
-                    className="w-full"
+                    className="w-1/2"
                     onClick={() => setSelectedNFTForInfo(nft)}
                   >
                     ℹ️ Info
