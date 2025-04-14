@@ -79,8 +79,8 @@ export function Inventory() {
     walletAddress: string,
     contractAddress: string,
     fromTimestamp: string,
-    maxTries = 120,
-    delayMs = 500
+    maxTries = 30,
+    delayMs = 2000
   ): Promise<NFT[]> => {
     let tries = 0;
     while (tries < maxTries) {
@@ -115,22 +115,23 @@ export function Inventory() {
     setRevealedAliens([]);
     setBurningTokenId(nft.token_id);
     setBurnError(null);
-    setIsVideoReady(true);
+    setIsVideoReady(false);
 
     const alienContract = "0x0b0c90da7d6c8a170cf3ef8e9f4ebe53682d3671";
     const fromTimestamp = new Date().toISOString();
 
     try {
-      videoRef.current?.play();
       const burnTx = await burnNFT(nft.token_id);
       if (!burnTx) throw new Error("Burn failed");
+
+      setIsVideoReady(true);
+      setTimeout(() => videoRef.current?.play(), 300);
 
       const newAliens = await pollForNewAliens(
         walletAddress,
         alienContract,
         fromTimestamp
       );
-
       setRevealedAliens(newAliens);
       setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
     } catch (err: any) {
@@ -141,10 +142,15 @@ export function Inventory() {
     }
   };
 
+  const handlePackModalClose = () => {
+    setOpeningPack(null);
+    loadInventory();
+  };
+
   return (
     <>
       <Card className="bg-background/50 backdrop-blur-sm border-primary/20">
-        <CardHeader className="flex flex-wrap md:flex-nowrap justify-start items-center gap-4">
+        <CardHeader className="flex flex-row items-center gap-4">
           <Select
             value={filter}
             onValueChange={(value: FilterType) => setFilter(value)}
@@ -211,12 +217,9 @@ export function Inventory() {
         </CardContent>
       </Card>
 
-      <Dialog
-        open={openingPack !== null}
-        onOpenChange={() => setOpeningPack(null)}
-      >
+      <Dialog open={openingPack !== null} onOpenChange={handlePackModalClose}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
-          {!showCards && (
+          {!showCards && isVideoReady && (
             <video
               ref={videoRef}
               src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
@@ -224,7 +227,7 @@ export function Inventory() {
               playsInline
               muted
               autoPlay
-              loop
+              loop={false}
               controls={false}
               key={openingPack?.token_id}
               onEnded={handleVideoEnded}
