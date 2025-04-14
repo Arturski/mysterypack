@@ -168,6 +168,7 @@ export function Inventory() {
             <SelectItem value="aliens">Aliens</SelectItem>
           </SelectContent>
         </Select>
+
         <Select value={sort} onValueChange={(v: SortType) => setSort(v)}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Sort by rarity" />
@@ -177,6 +178,7 @@ export function Inventory() {
             <SelectItem value="rarityAsc">Rarity ↑</SelectItem>
           </SelectContent>
         </Select>
+
         <Button variant="outline" onClick={loadInventory}>
           🔄 Refresh
         </Button>
@@ -205,7 +207,7 @@ export function Inventory() {
                 <p className="text-xs text-center text-muted-foreground">
                   {rarity}
                 </p>
-                <div className="flex gap-2 mt-2">
+                <div className="flex flex-col gap-2 mt-2">
                   {nft.collection === "pack" && nft.token_id === "1" && (
                     <Button
                       className="w-full"
@@ -214,15 +216,13 @@ export function Inventory() {
                       🎁 Open Pack
                     </Button>
                   )}
-                  {nft.collection === "alien" && (
-                    <Button
-                      variant="secondary"
-                      className="w-full"
-                      onClick={() => setSelectedNFTForInfo(nft)}
-                    >
-                      ℹ️ Info
-                    </Button>
-                  )}
+                  <Button
+                    variant="secondary"
+                    className="w-full"
+                    onClick={() => setSelectedNFTForInfo(nft)}
+                  >
+                    ℹ️ Info
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -230,22 +230,13 @@ export function Inventory() {
         })}
       </div>
 
-      {/* PACK OPENING MODAL */}
-      <Dialog
-        open={!!openingPack}
-        onOpenChange={(open) => {
-          if (!open) {
-            setOpeningPack(null);
-            loadInventory();
-          }
-        }}
-      >
+      <Dialog open={!!openingPack} onOpenChange={() => setOpeningPack(null)}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
             <div className="relative">
               <video
                 ref={videoRef}
-                src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
+                src="https://raw.githubusercontent.com/Arturski/public-static/main/demo/aliens/open-pack.mp4"
                 className="w-full aspect-video object-contain max-h-[400px]"
                 playsInline
                 muted
@@ -262,6 +253,7 @@ export function Inventory() {
               </div>
             </div>
           )}
+
           <AnimatePresence>
             {showCards && (
               <div className="p-8 bg-background">
@@ -311,24 +303,18 @@ export function Inventory() {
         </DialogContent>
       </Dialog>
 
-      {/* NFT INFO MODAL */}
       <Dialog
         open={!!selectedNFTForInfo}
         onOpenChange={() => setSelectedNFTForInfo(null)}
       >
-        <DialogContent className="max-w-lg p-6 space-y-4">
+        <DialogContent className="max-w-2xl p-6 space-y-4">
           {selectedNFTForInfo && (
-            <>
-              <DialogTitle>{selectedNFTForInfo.name}</DialogTitle>
-              <img
-                src={selectedNFTForInfo.image}
-                alt={selectedNFTForInfo.name}
-                className="w-full h-auto rounded"
-              />
-              <p className="text-sm text-muted-foreground">
-                {selectedNFTForInfo.description}
-              </p>
-              <div className="text-sm">
+            <div className="flex flex-col md:flex-row gap-6">
+              <div className="flex-1 overflow-y-auto max-h-[400px] pr-4">
+                <DialogTitle>{selectedNFTForInfo.name}</DialogTitle>
+                <p className="text-sm text-muted-foreground mb-2">
+                  {selectedNFTForInfo.description}
+                </p>
                 <Label className="font-semibold">Token ID:</Label>
                 <p className="mb-2">{selectedNFTForInfo.token_id}</p>
                 <Label className="font-semibold">Collection:</Label>
@@ -361,7 +347,14 @@ export function Inventory() {
                   </div>
                 )}
               </div>
-            </>
+              <div className="flex-1 flex items-center justify-center">
+                <img
+                  src={selectedNFTForInfo.image}
+                  alt={selectedNFTForInfo.name}
+                  className="w-full h-auto rounded max-h-[400px] object-contain"
+                />
+              </div>
+            </div>
           )}
         </DialogContent>
       </Dialog>
