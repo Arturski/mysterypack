@@ -30,7 +30,22 @@ interface NFT {
 }
 
 type FilterType = "all" | "packs" | "aliens";
+type SortType = "rarityAsc" | "rarityDesc";
 
+const rarityOrder: Record<string, number> = {
+  Mythical: 1,
+  Legendary: 2,
+  Rare: 3,
+  Common: 4,
+  Unknown: 5,
+};
+
+const getRarity = (nft: NFT): string => {
+  return (
+    nft.attributes?.find((attr) => attr.trait_type === "Rarity")?.value ??
+    "Unknown"
+  );
+};
 const getRarityStyle = (rarity: string | undefined) => {
   switch (rarity) {
     case "Mythical":
@@ -57,6 +72,7 @@ export function Inventory() {
   const [showCards, setShowCards] = useState(false);
   const [revealedAliens, setRevealedAliens] = useState<NFT[]>([]);
   const [filter, setFilter] = useState<FilterType>("all");
+  const [sort, setSort] = useState<SortType>("rarityDesc");
   const [burningTokenId, setBurningTokenId] = useState<string | null>(null);
   const [burnError, setBurnError] = useState<string | null>(null);
   const [isVideoReady, setIsVideoReady] = useState(false);
@@ -68,8 +84,12 @@ export function Inventory() {
   });
 
   useEffect(() => {
+    const loadInventory = async () => {
+      const data = await fetchInventory(walletAddress);
+      setNfts(data || []);
+    };
     loadInventory();
-  }, []);
+  }, [walletAddress]);
 
   const loadInventory = async () => {
     setLoading(true);
@@ -83,12 +103,18 @@ export function Inventory() {
     }
   };
 
-  const filteredNfts = nfts.filter((nft) => {
-    if (filter === "all") return true;
-    if (filter === "packs") return nft.collection === "pack";
-    if (filter === "aliens") return nft.collection === "alien";
-    return true;
-  });
+  const filteredSortedNfts = nfts
+    .filter((nft) => {
+      if (filter === "all") return true;
+      if (filter === "packs") return nft.collection === "pack";
+      if (filter === "aliens") return nft.collection === "alien";
+      return true;
+    })
+    .sort((a, b) => {
+      const rarityA = rarityOrder[getRarity(a)] || rarityOrder.Unknown;
+      const rarityB = rarityOrder[getRarity(b)] || rarityOrder.Unknown;
+      return sort === "rarityAsc" ? rarityA - rarityB : rarityB - rarityA;
+    });
 
   const pollForNewAliens = async (
     walletAddress: string,
@@ -175,16 +201,23 @@ export function Inventory() {
             <SelectItem value="aliens">Aliens</SelectItem>
           </SelectContent>
         </Select>
+        <Select value={sort} onValueChange={(v: SortType) => setSort(v)}>
+          <SelectTrigger className="w-44">
+            <SelectValue placeholder="Sort by rarity" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="rarityDesc">Rarity ↓</SelectItem>
+            <SelectItem value="rarityAsc">Rarity ↑</SelectItem>
+          </SelectContent>
+        </Select>
         <Button variant="outline" onClick={loadInventory}>
           🔄 Refresh
         </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
-        {filteredNfts.map((nft) => {
-          const rarity = nft.attributes?.find(
-            (a) => a.trait_type === "Rarity"
-          )?.value;
+        {filteredSortedNfts.map((nft) => {
+          const rarity = getRarity(nft);
           return (
             <Card
               key={nft.token_id}
