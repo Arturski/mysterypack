@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Alien Hub – Mystery Pack Demo
+
+A **work-in-progress** React/Next.js app showcasing a Mystery Pack NFT opening flow using the [Immutable zkEVM](https://www.immutable.com/zkEVM) SDK.
+
+🌐 Live demo: [https://mysterypack-eight.vercel.app/](https://mysterypack-eight.vercel.app/)
+
+---
 
 ## Getting Started
 
-First, run the development server:
+First,configutr the environment variables in `.env` then run the development server:
 
 ```bash
+npm install
 npm run dev
 # or
+yarn
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 🧪 Features
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Mystery Pack NFTs (ERC-1155) that burn and reveal collectible Alien NFTs.
+- Beautiful reveal animation flow powered by **Framer Motion** and video playback.
+- Visual rarity styling with rarity-aware sorting.
+- Detailed metadata modal view for each NFT.
+- Filtering between **Special Items (Packs, VIP Pass)** and **Aliens**.
+- Wallet connection via Immutable Passport (EIP-1193 context).
+- Inventory updated automatically after opening packs.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+### 🛠️ Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js** with App Router
+- **Tailwind CSS** for utility-first styling
+- **Framer Motion** for animations
+- **Immutable zkEVM SDK**
+- **Chakra UI (partially)** and custom UI components
+- Backend-less frontend using Immutable APIs
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### ⚠️ Known Limitations
 
-## Deploy on Vercel
+- Currently uses **polling** after pack burn to detect new Alien NFTs.
+- Ideal solution would use a **webhook backend + WebSocket frontend** pattern:
+  - The backend listens for on-chain events (e.g., via Alchemy/Blockscout or Immutable APIs).
+  - Emits a signal (via WebSocket or push) to notify frontend of inventory updates.
+- Polling may cause small delays in revealing NFTs, depending on block processing times.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+---
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 📝 TODO
+
+- [ ] Optimize codebase and remove redundant logic/hooks.
+- [ ] Introduce **VIP Pass** NFTs:
+  - ERC-1155 token ID `2` on the same contract.
+  - Grants access to special areas or Discord roles (e.g., via role verification).
+- [ ] Add backend listener and migrate to **event-driven inventory updates**.
+- [ ] Add transitions/placeholder states to enhance perceived performance during pack opening.
+- [ ] Add responsiveness testing on mobile (video and modal scaling).
+
+---
+
+### 📦 Inventory Design
+
+- Packs and VIP Passes are both on the same 1155 contract:
+  - Token ID 1 = **Mystery Pack**
+  - Token ID 2 = **VIP Pass**
+- Only Token ID 1 is openable. Token ID 2 will be used for Discord integration later.
+
+---
+
+### 📄 License
+
+MIT (when finalized).
