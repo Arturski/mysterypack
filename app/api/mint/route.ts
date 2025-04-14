@@ -9,19 +9,28 @@ export async function POST(request: Request) {
     const body = await request.json();
     console.log("🔍 Request Body:", body);
 
-    const { walletAddress } = body;
+    const { walletAddress, tokenId } = body;
 
-    if (!walletAddress) {
-      console.warn("⚠️ Wallet address is missing");
+    if (!walletAddress || !tokenId) {
+      console.warn("⚠️ Missing wallet address or tokenId");
       return NextResponse.json(
-        { error: "Wallet address is required" },
+        { error: "walletAddress and tokenId are required" },
         { status: 400 }
       );
     }
 
-    console.log(`👛 Minting for wallet: ${walletAddress}`);
+    // Only allow token ID 1 (pack) or 2 (VIP pass)
+    if (tokenId !== "1" && tokenId !== "2") {
+      console.warn("⚠️ Invalid tokenId:", tokenId);
+      return NextResponse.json(
+        { error: "Invalid tokenId. Must be '1' or '2'" },
+        { status: 400 }
+      );
+    }
 
-    const reference_id = `pack-${Date.now()}`;
+    console.log(`👛 Minting token ID ${tokenId} for wallet: ${walletAddress}`);
+
+    const reference_id = `mint-${tokenId}-${Date.now()}`;
     console.log(`🆔 Generated reference ID: ${reference_id}`);
 
     const contractAddress = process.env.NEXT_PUBLIC_PACK_CONTRACT_ADDRESS;
@@ -33,8 +42,6 @@ export async function POST(request: Request) {
       );
     }
 
-    console.log(`🏗️ Using contract address: ${contractAddress}`);
-
     const res: blockchainData.Types.CreateMintRequestResult =
       await client.createMintRequest({
         chainName: "imtbl-zkevm-testnet",
@@ -44,7 +51,7 @@ export async function POST(request: Request) {
             {
               reference_id,
               owner_address: walletAddress,
-              token_id: "1",
+              token_id: tokenId,
               amount: "1",
             },
           ],
@@ -60,11 +67,11 @@ export async function POST(request: Request) {
     });
   } catch (error: any) {
     console.error(
-      "❌ Failed to mint pack:",
+      "❌ Failed to mint:",
       error?.response?.data || error.message || error
     );
     return NextResponse.json(
-      { error: error?.message || "Failed to mint pack" },
+      { error: error?.message || "Failed to mint" },
       { status: 500 }
     );
   }

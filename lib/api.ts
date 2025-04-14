@@ -52,19 +52,22 @@ export async function fetchInventory(walletAddress: string) {
 }
 
 // lib/api.ts
-export async function mintPack(walletAddress: string) {
+export async function mintPack(
+  walletAddress: string,
+  tokenId: "1" | "2" = "1"
+) {
   const res = await fetch("/api/mint", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ walletAddress }),
+    body: JSON.stringify({ walletAddress, tokenId }),
   });
 
   const data = await res.json();
 
   if (!res.ok) {
-    throw new Error(data.error || "Failed to mint pack");
+    throw new Error(data.error || "Failed to mint token");
   }
 
   return data;
