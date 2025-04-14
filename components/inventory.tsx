@@ -190,27 +190,32 @@ export function Inventory() {
           return (
             <Card
               key={nft.token_id}
-              className={`relative ${getRarityStyle(rarity)}`}
+              className={`relative flex flex-col justify-between ${getRarityStyle(
+                rarity
+              )}`}
             >
               {parseInt(nft.balance) > 1 && (
                 <div className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-0.5 rounded-full shadow-md z-10">
                   x{nft.balance}
                 </div>
               )}
-              <CardContent>
-                <img
-                  src={nft.image || "/placeholder.svg"}
-                  alt={nft.name}
-                  className="w-full h-full object-cover rounded mb-2"
-                />
-                <p className="font-semibold mb-1 text-center">{nft.name}</p>
-                <p className="text-xs text-center text-muted-foreground">
-                  {rarity}
-                </p>
-                <div className="flex gap-2 mt-2">
+              <CardContent className="flex flex-col h-full justify-between">
+                <div className="flex-grow">
+                  <img
+                    src={nft.image || "/placeholder.svg"}
+                    alt={nft.name}
+                    className="w-full h-full object-cover rounded mb-2"
+                  />
+                  <p className="font-semibold mb-1 text-center">{nft.name}</p>
+                  <p className="text-xs text-center text-muted-foreground">
+                    {rarity}
+                  </p>
+                </div>
+
+                <div className="flex gap-x-2 mt-4">
                   {nft.collection === "pack" && nft.token_id === "1" && (
                     <Button
-                      className="w-1/2"
+                      className="flex-1"
                       onClick={() => handleOpenPack(nft)}
                     >
                       🎁 Open Pack
@@ -218,7 +223,7 @@ export function Inventory() {
                   )}
                   <Button
                     variant="secondary"
-                    className="w-1/2"
+                    className="flex-1"
                     onClick={() => setSelectedNFTForInfo(nft)}
                   >
                     ℹ️ Info
