@@ -220,7 +220,7 @@ export function Inventory() {
                       className="flex-1"
                       onClick={() => handleOpenPack(nft)}
                     >
-                      🎁 Open Pack
+                      🎁 Open
                     </Button>
                   )}
                   <Button
