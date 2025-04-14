@@ -147,7 +147,9 @@ export function Inventory() {
   };
 
   const handleVideoEnded = () => {
-    setShowCards(true);
+    if (revealedAliens.length > 0) {
+      setShowCards(true);
+    }
   };
 
   const handleOpenPack = async (nft: NFT) => {
@@ -166,7 +168,7 @@ export function Inventory() {
       if (!burnTx) throw new Error("Burn failed");
 
       setIsVideoReady(true);
-      setTimeout(() => videoRef.current?.play(), 300);
+      videoRef.current?.play();
 
       const newAliens = await pollForNewAliens(
         walletAddress,
@@ -272,16 +274,15 @@ export function Inventory() {
               <video
                 ref={videoRef}
                 src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
-                className="w-full max-h-[400px] object-cover"
+                className="w-full aspect-video object-contain max-h-[400px]"
                 playsInline
                 muted
                 autoPlay
                 loop={false}
                 controls={false}
-                key={openingPack?.token_id}
                 onEnded={handleVideoEnded}
               />
-              <div className="absolute inset-0 flex items-center justify-center">
+              <div className="absolute inset-0 flex items-end justify-center pb-8">
                 <div className="bg-black/50 p-4 rounded-lg text-white">
                   <p className="animate-pulse text-center">
                     🚀 Scanning the universe for new aliens...
