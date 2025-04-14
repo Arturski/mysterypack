@@ -4,8 +4,8 @@ import { useState, useEffect, useRef, useContext } from "react";
 import axios from "axios";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { fetchInventory } from "@/lib/api";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Select,
@@ -67,6 +67,9 @@ export function Inventory() {
   const [filter, setFilter] = useState<FilterType>("all");
   const [sort, setSort] = useState<SortType>("rarityDesc");
   const [openingPack, setOpeningPack] = useState<NFT | null>(null);
+  const [selectedNFTForInfo, setSelectedNFTForInfo] = useState<NFT | null>(
+    null
+  );
   const [revealedAliens, setRevealedAliens] = useState<NFT[]>([]);
   const [showCards, setShowCards] = useState(false);
   const { walletAddress } = useContext(EIP1193Context);
@@ -75,11 +78,12 @@ export function Inventory() {
     contractAddress: "0xb001670b074140aa6942fbf62539562c65843719",
   });
 
+  const loadInventory = async () => {
+    const data = await fetchInventory(walletAddress);
+    setNfts(data || []);
+  };
+
   useEffect(() => {
-    const loadInventory = async () => {
-      const data = await fetchInventory(walletAddress);
-      setNfts(data || []);
-    };
     loadInventory();
   }, [walletAddress]);
 
@@ -145,6 +149,7 @@ export function Inventory() {
       );
       setRevealedAliens(newAliens);
       setShowCards(true);
+      setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
     } catch (err) {
       console.error("Error opening pack:", err);
     }
@@ -163,7 +168,6 @@ export function Inventory() {
             <SelectItem value="aliens">Aliens</SelectItem>
           </SelectContent>
         </Select>
-
         <Select value={sort} onValueChange={(v: SortType) => setSort(v)}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Sort by rarity" />
@@ -173,6 +177,9 @@ export function Inventory() {
             <SelectItem value="rarityAsc">Rarity ↑</SelectItem>
           </SelectContent>
         </Select>
+        <Button variant="outline" onClick={loadInventory}>
+          🔄 Refresh
+        </Button>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -183,6 +190,11 @@ export function Inventory() {
               key={nft.token_id}
               className={`relative ${getRarityStyle(rarity)}`}
             >
+              {parseInt(nft.balance) > 1 && (
+                <div className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-0.5 rounded-full shadow-md z-10">
+                  x{nft.balance}
+                </div>
+              )}
               <CardContent>
                 <img
                   src={nft.image || "/placeholder.svg"}
@@ -193,21 +205,41 @@ export function Inventory() {
                 <p className="text-xs text-center text-muted-foreground">
                   {rarity}
                 </p>
-                {nft.collection === "pack" && nft.token_id === "1" && (
-                  <Button
-                    className="w-full mt-2"
-                    onClick={() => handleOpenPack(nft)}
-                  >
-                    🎁 Open Pack
-                  </Button>
-                )}
+                <div className="flex gap-2 mt-2">
+                  {nft.collection === "pack" && nft.token_id === "1" && (
+                    <Button
+                      className="w-full"
+                      onClick={() => handleOpenPack(nft)}
+                    >
+                      🎁 Open Pack
+                    </Button>
+                  )}
+                  {nft.collection === "alien" && (
+                    <Button
+                      variant="secondary"
+                      className="w-full"
+                      onClick={() => setSelectedNFTForInfo(nft)}
+                    >
+                      ℹ️ Info
+                    </Button>
+                  )}
+                </div>
               </CardContent>
             </Card>
           );
         })}
       </div>
 
-      <Dialog open={!!openingPack} onOpenChange={() => setOpeningPack(null)}>
+      {/* PACK OPENING MODAL */}
+      <Dialog
+        open={!!openingPack}
+        onOpenChange={(open) => {
+          if (!open) {
+            setOpeningPack(null);
+            loadInventory();
+          }
+        }}
+      >
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
             <div className="relative">
@@ -230,7 +262,6 @@ export function Inventory() {
               </div>
             </div>
           )}
-
           <AnimatePresence>
             {showCards && (
               <div className="p-8 bg-background">
@@ -277,6 +308,61 @@ export function Inventory() {
               </div>
             )}
           </AnimatePresence>
+        </DialogContent>
+      </Dialog>
+
+      {/* NFT INFO MODAL */}
+      <Dialog
+        open={!!selectedNFTForInfo}
+        onOpenChange={() => setSelectedNFTForInfo(null)}
+      >
+        <DialogContent className="max-w-lg p-6 space-y-4">
+          {selectedNFTForInfo && (
+            <>
+              <DialogTitle>{selectedNFTForInfo.name}</DialogTitle>
+              <img
+                src={selectedNFTForInfo.image}
+                alt={selectedNFTForInfo.name}
+                className="w-full h-auto rounded"
+              />
+              <p className="text-sm text-muted-foreground">
+                {selectedNFTForInfo.description}
+              </p>
+              <div className="text-sm">
+                <Label className="font-semibold">Token ID:</Label>
+                <p className="mb-2">{selectedNFTForInfo.token_id}</p>
+                <Label className="font-semibold">Collection:</Label>
+                <p className="mb-2">{selectedNFTForInfo.collection}</p>
+                <Label className="font-semibold">Contract Address:</Label>
+                <p className="mb-2 break-all">
+                  {selectedNFTForInfo.contractAddress}
+                </p>
+                {selectedNFTForInfo.attributes && (
+                  <div className="mt-4">
+                    <Label className="font-semibold mb-2 block">
+                      Attributes
+                    </Label>
+                    <table className="w-full text-sm border border-muted rounded overflow-hidden">
+                      <thead>
+                        <tr className="bg-muted">
+                          <th className="text-left px-2 py-1">Trait</th>
+                          <th className="text-left px-2 py-1">Value</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {selectedNFTForInfo.attributes.map((attr, i) => (
+                          <tr key={i} className="border-t">
+                            <td className="px-2 py-1">{attr.trait_type}</td>
+                            <td className="px-2 py-1">{String(attr.value)}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            </>
+          )}
         </DialogContent>
       </Dialog>
     </div>
