@@ -26,6 +26,7 @@ interface NFT {
   balance: string;
   collection: "pack" | "alien";
   contractAddress: string;
+  attributes?: { trait_type: string; value: string }[];
 }
 
 type FilterType = "all" | "packs" | "aliens";
@@ -114,12 +115,13 @@ export function Inventory() {
     setRevealedAliens([]);
     setBurningTokenId(nft.token_id);
     setBurnError(null);
-    setIsVideoReady(false);
+    setIsVideoReady(true);
 
     const alienContract = "0x0b0c90da7d6c8a170cf3ef8e9f4ebe53682d3671";
     const fromTimestamp = new Date().toISOString();
 
     try {
+      videoRef.current?.play();
       const burnTx = await burnNFT(nft.token_id);
       if (!burnTx) throw new Error("Burn failed");
 
@@ -131,12 +133,6 @@ export function Inventory() {
 
       setRevealedAliens(newAliens);
       setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
-
-      // ✅ Now start video playback
-      setTimeout(() => {
-        videoRef.current?.play();
-      }, 300);
-      setIsVideoReady(true);
     } catch (err: any) {
       console.error("Open pack error:", err);
       setBurnError(err.message || "Failed to open pack");
@@ -148,10 +144,7 @@ export function Inventory() {
   return (
     <>
       <Card className="bg-background/50 backdrop-blur-sm border-primary/20">
-        <CardHeader>
-          <CardTitle>
-            Your Alien Invasion NFTs ({filteredNfts.length})
-          </CardTitle>
+        <CardHeader className="flex flex-wrap md:flex-nowrap justify-start items-center gap-4">
           <Select
             value={filter}
             onValueChange={(value: FilterType) => setFilter(value)}
@@ -165,6 +158,9 @@ export function Inventory() {
               <SelectItem value="aliens">Aliens</SelectItem>
             </SelectContent>
           </Select>
+          <Button variant="outline" onClick={loadInventory}>
+            🔄 Refresh
+          </Button>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -181,27 +177,30 @@ export function Inventory() {
                     alt={nft.name}
                     className="w-full h-full object-cover rounded mb-2"
                   />
-                  <p className="font-semibold">{nft.name}</p>
-
-                  {nft.collection === "pack" && (
-                    <Button
-                      className="mt-2"
-                      onClick={() => handleOpenPack(nft)}
-                    >
-                      🎁 Open Pack
-                    </Button>
-                  )}
-
-                  {nft.collection === "alien" && (
-                    <Button
-                      variant="secondary"
-                      className="mt-2"
-                      onClick={() => setSelectedNFTForInfo(nft)}
-                    >
-                      ℹ️ Info
-                    </Button>
-                  )}
-
+                  <p className="font-semibold mb-2">{nft.name}</p>
+                  <div
+                    className={`flex gap-2 ${
+                      nft.collection === "alien" ? "justify-evenly" : ""
+                    }`}
+                  >
+                    {nft.collection === "pack" && (
+                      <Button
+                        className="w-full"
+                        onClick={() => handleOpenPack(nft)}
+                      >
+                        🎁 Open Pack
+                      </Button>
+                    )}
+                    {nft.collection === "alien" && (
+                      <Button
+                        variant="secondary"
+                        className="w-full"
+                        onClick={() => setSelectedNFTForInfo(nft)}
+                      >
+                        ℹ️ Info
+                      </Button>
+                    )}
+                  </div>
                   {burnError && burningTokenId === nft.token_id && (
                     <p className="text-red-500 text-sm mt-2">{burnError}</p>
                   )}
@@ -218,29 +217,18 @@ export function Inventory() {
       >
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
-            <>
-              {isVideoReady ? (
-                <video
-                  ref={videoRef}
-                  src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
-                  className="w-full h-full"
-                  playsInline
-                  muted
-                  autoPlay
-                  loop={false}
-                  controls={false}
-                  onEnded={handleVideoEnded}
-                  key={openingPack?.token_id}
-                />
-              ) : (
-                <div className="p-8 bg-background text-center text-white">
-                  <p className="text-lg mb-4 animate-pulse">
-                    Scanning the universe for new aliens...
-                  </p>
-                  <div className="w-8 h-8 border-4 border-white border-t-transparent rounded-full animate-spin mx-auto" />
-                </div>
-              )}
-            </>
+            <video
+              ref={videoRef}
+              src="https://raw.githubusercontent.com/Arturski/public-static/refs/heads/main/demo/aliens/open-pack.mp4"
+              className="w-full h-full"
+              playsInline
+              muted
+              autoPlay
+              loop
+              controls={false}
+              key={openingPack?.token_id}
+              onEnded={handleVideoEnded}
+            />
           )}
           <AnimatePresence>
             {showCards && (
@@ -269,6 +257,11 @@ export function Inventory() {
                           </div>
                           <p className="text-sm font-semibold text-center">
                             {alien.name}
+                          </p>
+                          <p className="text-xs text-center text-muted-foreground mt-1">
+                            {alien.attributes?.find(
+                              (a) => a.trait_type === "Rarity"
+                            )?.value || "Unknown Rarity"}
                           </p>
                         </CardContent>
                       </Card>
