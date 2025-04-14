@@ -26,7 +26,7 @@ export default function Home() {
           <div className="flex items-center gap-4">
             {walletAddress && (
               <span className="text-sm text-white bg-gray-800 px-3 py-1 rounded-lg">
-                {walletAddress.slice(0, 6)}...{walletAddress.slice(-4)}
+                {walletAddress}
               </span>
             )}
             <WalletConnect onWalletConnect={setWalletAddress} />
