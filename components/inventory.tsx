@@ -33,10 +33,12 @@ type FilterType = "all" | "packs" | "aliens";
 
 const getRarityStyle = (rarity: string | undefined) => {
   switch (rarity) {
+    case "Mythical":
+      return "border-4 border-cyan-400 shadow-xl shadow-cyan-400/50";
     case "Legendary":
       return "border-4 border-yellow-400 shadow-lg shadow-yellow-400/50";
     case "Rare":
-      return "border-4 border-purple-400 shadow-lg shadow-purple-400/50";
+      return "border-4 border-purple-400 shadow-md shadow-purple-400/50";
     case "Common":
       return "border-4 border-gray-300 shadow shadow-gray-300/50";
     default:
