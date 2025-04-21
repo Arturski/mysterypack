@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { MintSuccessDialog } from "./mint-success-dialog";
 import { EIP1193Context } from "@/app/context/EIP1193Context";
 import { useToast } from "@/components/ui/use-toast";
-import { mintToken } from "@/lib/immutable";
+import { mintAsset } from "@/lib/api";
 import { VIP_PASS_TOKEN_ID } from "@/lib/constants";
 
 export function MintVipPass() {
@@ -27,7 +27,7 @@ export function MintVipPass() {
 
     setIsMinting(true);
     try {
-      await mintToken({ tokenId: VIP_PASS_TOKEN_ID, walletAddress });
+      await mintAsset(walletAddress, VIP_PASS_TOKEN_ID);
       setShowSuccess(true);
     } catch (error: any) {
       toast({

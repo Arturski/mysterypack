@@ -1,7 +1,6 @@
 "use client";
 
 import { MainNav } from "@/components/main-nav";
-import { MysteryPack } from "@/components/mystery-pack";
 import Inventory from "@/components/inventory";
 import { WalletConnect } from "@/components/wallet-connect";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";

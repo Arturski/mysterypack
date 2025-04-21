@@ -71,3 +71,21 @@ export async function mintPack(
 
   return data;
 }
+
+// lib/api.ts to replace above
+
+export async function mintAsset(walletAddress: string, tokenId: string) {
+  const res = await fetch("/api/mint", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ walletAddress, tokenId }),
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data.error || "Failed to mint asset");
+  }
+
+  return data;
+}
