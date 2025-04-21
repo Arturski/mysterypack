@@ -1,0 +1,6 @@
+export const PACK_TOKEN_ID = "1";
+export const VIP_PASS_TOKEN_ID = "2";
+export const SPECIALS_CONTRACT_ADDRESS =
+  process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS!;
+export const ALIEN_CONTRACT_ADDRESS =
+  process.env.NEXT_PUBLIC_ALIEN_CONTRACT_ADDRESS!;
