@@ -33,7 +33,7 @@ export async function POST(request: Request) {
     const reference_id = `mint-${tokenId}-${Date.now()}`;
     console.log(`🆔 Generated reference ID: ${reference_id}`);
 
-    const contractAddress = process.env.NEXT_PUBLIC_PACK_CONTRACT_ADDRESS;
+    const contractAddress = process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS;
     if (!contractAddress) {
       console.error("❌ Contract address is missing in env vars");
       return NextResponse.json(

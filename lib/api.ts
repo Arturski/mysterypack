@@ -2,7 +2,8 @@
 
 import axios from "axios";
 
-const PACK_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS;
+const SPECIALS_CONTRACT_ADDRESS =
+  process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS;
 const ALIEN_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_ALIEN_CONTRACT_ADDRESS;
 
 export async function fetchInventory(walletAddress: string) {
@@ -17,7 +18,7 @@ export async function fetchInventory(walletAddress: string) {
       axios.get(
         `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`,
         {
-          params: { contract_address: PACK_CONTRACT_ADDRESS },
+          params: { contract_address: SPECIALS_CONTRACT_ADDRESS },
           headers: { Accept: "application/json" },
         }
       ),
