@@ -144,14 +144,18 @@ export function MysteryPack({ onPackMinted }: MysteryPackProps) {
               <Button
                 className="w-full"
                 onClick={() => {
-                  window.open(
-                    "https://play.sandbox.immutable.com/collection/zkEvm/0xb001670b074140aa6942fbf62539562c65843719/",
-                    "_blank"
-                  );
+                  const contractAddress =
+                    process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS;
+                  if (contractAddress) {
+                    window.open(
+                      `https://play.sandbox.immutable.com/collection/zkEvm/${contractAddress}/`,
+                      "_blank"
+                    );
+                  }
                 }}
               >
                 <ExternalLink className="mr-2 h-4 w-4" />
-                View in Immutable
+                View on Immutable Play
               </Button>
             </div>
           </div>

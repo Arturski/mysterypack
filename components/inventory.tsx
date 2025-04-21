@@ -40,14 +40,11 @@ const rarityOrder: Record<string, number> = {
   Unknown: 5,
 };
 
-const getRarity = (nft: NFT): string => {
-  return (
-    nft.attributes?.find((attr) => attr.trait_type === "Rarity")?.value ??
-    "Unknown"
-  );
-};
+const getRarity = (nft: NFT): string =>
+  nft.attributes?.find((attr) => attr.trait_type === "Rarity")?.value ??
+  "Unknown";
 
-const getRarityStyle = (rarity: string | undefined) => {
+const getRarityStyle = (rarity: string | undefined): string => {
   switch (rarity) {
     case "Mythical":
       return "border-4 border-cyan-400 shadow-xl shadow-cyan-400/50";
@@ -74,29 +71,30 @@ export function Inventory() {
   const [showCards, setShowCards] = useState(false);
   const { walletAddress } = useContext(EIP1193Context);
   const videoRef = useRef<HTMLVideoElement>(null);
+
   const { burnNFT } = useBurnNFT({
-    contractAddress: "0xb001670b074140aa6942fbf62539562c65843719",
+    contractAddress: process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS || "",
   });
 
+  useEffect(() => {
+    if (walletAddress) loadInventory();
+  }, [walletAddress]);
+
   const loadInventory = async () => {
+    if (!walletAddress) return;
     const data = await fetchInventory(walletAddress);
     setNfts(data || []);
   };
 
-  useEffect(() => {
-    loadInventory();
-  }, [walletAddress]);
-
   const filteredSortedNfts = nfts
     .filter((nft) => {
-      if (filter === "all") return true;
       if (filter === "packs") return nft.collection === "pack";
       if (filter === "aliens") return nft.collection === "alien";
       return true;
     })
     .sort((a, b) => {
-      const rarityA = rarityOrder[getRarity(a)] || rarityOrder.Unknown;
-      const rarityB = rarityOrder[getRarity(b)] || rarityOrder.Unknown;
+      const rarityA = rarityOrder[getRarity(a)] ?? rarityOrder.Unknown;
+      const rarityB = rarityOrder[getRarity(b)] ?? rarityOrder.Unknown;
       return sort === "rarityAsc" ? rarityA - rarityB : rarityB - rarityA;
     });
 
@@ -107,8 +105,7 @@ export function Inventory() {
     maxTries = 60,
     delayMs = 500
   ): Promise<NFT[]> => {
-    let tries = 0;
-    while (tries < maxTries) {
+    for (let tries = 0; tries < maxTries; tries++) {
       try {
         const { data } = await axios.get(
           `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`,
@@ -125,7 +122,6 @@ export function Inventory() {
         console.error("Error polling for NFTs:", err);
       }
       await new Promise((res) => setTimeout(res, delayMs));
-      tries++;
     }
     return [];
   };
@@ -134,16 +130,15 @@ export function Inventory() {
     setOpeningPack(nft);
     setShowCards(false);
     setRevealedAliens([]);
-
-    const alienContract = "0x0b0c90da7d6c8a170cf3ef8e9f4ebe53682d3671";
     const fromTimestamp = new Date().toISOString();
+    const alienContract = process.env.NEXT_PUBLIC_ALIEN_CONTRACT_ADDRESS || "";
 
     videoRef.current?.play();
 
     try {
       await burnNFT(nft.token_id);
       const newAliens = await pollForNewAliens(
-        walletAddress,
+        walletAddress!,
         alienContract,
         fromTimestamp
       );
@@ -157,6 +152,7 @@ export function Inventory() {
 
   return (
     <div className="p-4 space-y-6">
+      {/* Controls */}
       <div className="flex flex-wrap md:flex-nowrap gap-4 items-center">
         <Select value={filter} onValueChange={(v: FilterType) => setFilter(v)}>
           <SelectTrigger className="w-44">
@@ -168,7 +164,6 @@ export function Inventory() {
             <SelectItem value="aliens">Aliens</SelectItem>
           </SelectContent>
         </Select>
-
         <Select value={sort} onValueChange={(v: SortType) => setSort(v)}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Sort by rarity" />
@@ -178,12 +173,12 @@ export function Inventory() {
             <SelectItem value="rarityAsc">Rarity ↑</SelectItem>
           </SelectContent>
         </Select>
-
         <Button variant="outline" onClick={loadInventory}>
           🔄 Refresh
         </Button>
       </div>
 
+      {/* NFT Grid */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {filteredSortedNfts.map((nft) => {
           const rarity = getRarity(nft);
@@ -213,9 +208,8 @@ export function Inventory() {
                     {rarity}
                   </p>
                 </div>
-
                 <div className="flex gap-x-2 mt-4">
-                  {nft.collection === "pack" && nft.token_id === "1" && (
+                  {nft.collection === "pack" && (
                     <Button
                       className="flex-1"
                       onClick={() => handleOpenPack(nft)}
@@ -237,6 +231,7 @@ export function Inventory() {
         })}
       </div>
 
+      {/* Open Pack Modal */}
       <Dialog open={!!openingPack} onOpenChange={() => setOpeningPack(null)}>
         <DialogContent className="max-w-4xl p-0 overflow-hidden bg-black border-0">
           {!showCards && (
@@ -285,7 +280,7 @@ export function Inventory() {
                           )}`}
                         >
                           <CardContent className="p-3">
-                            <div className="aspect-square rounded bg-secondary flex items-center justify-center mb-2">
+                            <div className="aspect-square bg-secondary rounded mb-2 flex items-center justify-center">
                               <img
                                 src={alien.image || "/placeholder.svg"}
                                 alt={alien.name}
@@ -310,6 +305,7 @@ export function Inventory() {
         </DialogContent>
       </Dialog>
 
+      {/* NFT Info Dialog */}
       <Dialog
         open={!!selectedNFTForInfo}
         onOpenChange={() => setSelectedNFTForInfo(null)}

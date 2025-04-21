@@ -1,11 +1,9 @@
 "use client";
 
 import axios from "axios";
-import { v4 as uuidv4 } from "uuid";
 
-const API_KEY = "sk_imapik-test-oK4LbHJXlaCK0FOa-zVg_8a303b";
-const PACK_CONTRACT_ADDRESS = "0xb001670b074140aa6942fbf62539562c65843719";
-const ALIEN_CONTRACT_ADDRESS = "0x0b0c90da7d6c8a170cf3ef8e9f4ebe53682d3671";
+const PACK_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS;
+const ALIEN_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_ALIEN_CONTRACT_ADDRESS;
 
 export async function fetchInventory(walletAddress: string) {
   if (!walletAddress) {
@@ -44,7 +42,7 @@ export async function fetchInventory(walletAddress: string) {
 
     return [...packs, ...aliens];
   } catch (error: any) {
-    console.error("❌ Inventory API Error:", error);
+    console.error("Inventory API Error:", error);
     throw new Error(
       error.response?.data?.message || "Failed to fetch inventory"
     );
