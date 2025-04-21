@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation"; // Use Next.js router
-import { passportInstance } from "../utils/setupDefault"; //
+import { passportInstance } from "../../lib/immutable-passport-client"; //
 
 export default function PassportRedirect() {
   const router = useRouter();

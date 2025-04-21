@@ -9,7 +9,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Wallet } from "lucide-react";
-import { passportInstance } from "../app/utils/setupDefault";
+import { passportInstance } from "../lib/immutable-passport-client";
 import { EIP1193Context } from "@/app/context/EIP1193Context";
 
 interface WalletConnectProps {

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { BrowserProvider, Contract } from "ethers";
-import { passportInstance } from "@/app/utils/setupDefault";
+import { passportInstance } from "@/lib/immutable-passport-client";
 
 interface BurnNFTParams {
   contractAddress: string;

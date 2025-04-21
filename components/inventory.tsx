@@ -1,7 +1,14 @@
+// components/inventory.tsx
+
 "use client";
 
 import { useState, useEffect, useRef, useContext } from "react";
 import { Button } from "@/components/ui/button";
+import { fetchInventory } from "@/lib/api";
+import { EIP1193Context } from "@/app/context/EIP1193Context";
+import { InventoryCard } from "./inventory-card";
+import { NFTInfoDialog } from "./nft-info";
+import AlienRevealModal from "./alien-reveal-modal";
 import {
   Select,
   SelectContent,
@@ -9,19 +16,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { AnimatePresence, motion } from "framer-motion";
-import axios from "axios";
-
-import { fetchInventory } from "@/lib/api";
-import { useBurnNFT } from "@/hooks/use-burn-nft";
-import { EIP1193Context } from "@/app/context/EIP1193Context";
-
-import { InventoryCard } from "./inventory-card";
-import { AlienRevealModal } from "./alien-reveal-modal";
-import { NFTInfo } from "./nft-info";
 
 import type { NFT } from "@/types/nft";
+
+type FilterType = "all" | "packs" | "aliens";
+type SortType = "rarityAsc" | "rarityDesc";
 
 const rarityOrder: Record<string, number> = {
   Mythical: 1,
@@ -31,24 +30,22 @@ const rarityOrder: Record<string, number> = {
   Unknown: 5,
 };
 
-const getRarity = (nft: NFT): string =>
-  nft.attributes?.find((attr: any) => attr.trait_type === "Rarity")?.value ??
-  "Unknown";
-
-export function Inventory() {
+export default function Inventory() {
   const [nfts, setNfts] = useState<NFT[]>([]);
-  const [filter, setFilter] = useState<"all" | "packs" | "aliens">("all");
-  const [sort, setSort] = useState<"rarityAsc" | "rarityDesc">("rarityDesc");
-  const [selectedNFT, setSelectedNFT] = useState<NFT | null>(null);
+  const [filter, setFilter] = useState<FilterType>("all");
+  const [sort, setSort] = useState<SortType>("rarityDesc");
   const [openingPack, setOpeningPack] = useState<NFT | null>(null);
+  const [selectedNFTForInfo, setSelectedNFTForInfo] = useState<NFT | null>(
+    null
+  );
   const [revealedAliens, setRevealedAliens] = useState<NFT[]>([]);
   const [showCards, setShowCards] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
   const { walletAddress } = useContext(EIP1193Context);
 
-  const { burnNFT } = useBurnNFT({
-    contractAddress: process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS || "",
-  });
+  useEffect(() => {
+    if (walletAddress) loadInventory();
+  }, [walletAddress]);
 
   const loadInventory = async () => {
     if (!walletAddress) return;
@@ -56,9 +53,9 @@ export function Inventory() {
     setNfts(data || []);
   };
 
-  useEffect(() => {
-    if (walletAddress) loadInventory();
-  }, [walletAddress]);
+  const getRarity = (nft: NFT): string =>
+    nft.attributes?.find((attr: any) => attr.trait_type === "Rarity")?.value ??
+    "Unknown";
 
   const filteredSortedNfts = nfts
     .filter((nft) => {
@@ -72,64 +69,10 @@ export function Inventory() {
       return sort === "rarityAsc" ? rarityA - rarityB : rarityB - rarityA;
     });
 
-  const pollForNewAliens = async (
-    walletAddress: string,
-    contractAddress: string,
-    fromTimestamp: string,
-    maxTries = 60,
-    delayMs = 500
-  ): Promise<NFT[]> => {
-    for (let tries = 0; tries < maxTries; tries++) {
-      try {
-        const { data } = await axios.get(
-          `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`,
-          {
-            params: {
-              contract_address: contractAddress,
-              from_updated_at: fromTimestamp,
-            },
-            headers: { Accept: "application/json" },
-          }
-        );
-        if (data.result?.length >= 3) return data.result.slice(0, 3);
-      } catch (err) {
-        console.error("Error polling for NFTs:", err);
-      }
-      await new Promise((res) => setTimeout(res, delayMs));
-    }
-    return [];
-  };
-
-  const handleOpenPack = async (nft: NFT) => {
-    setOpeningPack(nft);
-    setShowCards(false);
-    setRevealedAliens([]);
-
-    const fromTimestamp = new Date().toISOString();
-    const alienContract = process.env.NEXT_PUBLIC_ALIEN_CONTRACT_ADDRESS || "";
-
-    videoRef.current?.play();
-
-    try {
-      await burnNFT(nft.token_id);
-      const newAliens = await pollForNewAliens(
-        walletAddress!,
-        alienContract,
-        fromTimestamp
-      );
-      setRevealedAliens(newAliens);
-      setShowCards(true);
-      setNfts((prev) => prev.filter((n) => n.token_id !== nft.token_id));
-    } catch (err) {
-      console.error("Error opening pack:", err);
-    }
-  };
-
   return (
     <div className="p-4 space-y-6">
-      {/* Controls */}
       <div className="flex flex-wrap md:flex-nowrap gap-4 items-center">
-        <Select value={filter} onValueChange={(v) => setFilter(v as any)}>
+        <Select value={filter} onValueChange={(v: FilterType) => setFilter(v)}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Filter collection" />
           </SelectTrigger>
@@ -139,7 +82,8 @@ export function Inventory() {
             <SelectItem value="aliens">Aliens</SelectItem>
           </SelectContent>
         </Select>
-        <Select value={sort} onValueChange={(v) => setSort(v as any)}>
+
+        <Select value={sort} onValueChange={(v: SortType) => setSort(v)}>
           <SelectTrigger className="w-44">
             <SelectValue placeholder="Sort by rarity" />
           </SelectTrigger>
@@ -148,40 +92,38 @@ export function Inventory() {
             <SelectItem value="rarityAsc">Rarity ↑</SelectItem>
           </SelectContent>
         </Select>
+
         <Button variant="outline" onClick={loadInventory}>
           🔄 Refresh
         </Button>
       </div>
 
-      {/* NFT Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
         {filteredSortedNfts.map((nft) => (
           <InventoryCard
             key={nft.token_id}
             nft={nft}
-            rarity={getRarity(nft)}
-            onOpen={() => handleOpenPack(nft)}
-            onInfo={() => setSelectedNFT(nft)}
+            onOpen={() => setOpeningPack(nft)}
+            onInfo={() => setSelectedNFTForInfo(nft)}
           />
         ))}
       </div>
 
-      {/* Pack Opening Modal */}
       <AlienRevealModal
-        open={!!openingPack}
-        onClose={() => setOpeningPack(null)}
+        nft={openingPack}
+        videoRef={videoRef}
+        setRevealedAliens={setRevealedAliens}
+        setShowCards={setShowCards}
         showCards={showCards}
         revealedAliens={revealedAliens}
-        videoRef={videoRef}
+        onClose={() => setOpeningPack(null)}
       />
 
-      {/* NFT Info Modal */}
-      {selectedNFT && (
-        <Dialog open={!!selectedNFT} onOpenChange={() => setSelectedNFT(null)}>
-          <DialogContent className="max-w-2xl p-6 space-y-4">
-            <NFTInfo nft={selectedNFT} />
-          </DialogContent>
-        </Dialog>
+      {selectedNFTForInfo && (
+        <NFTInfoDialog
+          nft={selectedNFTForInfo}
+          onClose={() => setSelectedNFTForInfo(null)}
+        />
       )}
     </div>
   );

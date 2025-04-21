@@ -2,10 +2,11 @@
 
 import { MainNav } from "@/components/main-nav";
 import { MysteryPack } from "@/components/mystery-pack";
-import { Inventory } from "@/components/inventory";
+import Inventory from "@/components/inventory";
 import { WalletConnect } from "@/components/wallet-connect";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
+import { MintHub } from "@/components/mint-hub";
 
 export default function Home() {
   const [shouldRefreshInventory, setShouldRefreshInventory] = useState(0);
@@ -37,13 +38,13 @@ export default function Home() {
 
         <Tabs defaultValue="mystery" className="mt-8">
           <TabsList className="grid w-full grid-cols-2 bg-background/50 backdrop-blur-sm">
-            <TabsTrigger value="mystery">Mystery Packs</TabsTrigger>
+            <TabsTrigger value="mystery">Mint Special Items</TabsTrigger>
             <TabsTrigger value="inventory" className="flex items-center gap-2">
               Inventory
             </TabsTrigger>
           </TabsList>
           <TabsContent value="mystery" className="mt-4">
-            <MysteryPack onPackMinted={handlePackMinted} />
+            <MintHub />
           </TabsContent>
           <TabsContent value="inventory" className="mt-4">
             <Inventory key={shouldRefreshInventory} />
