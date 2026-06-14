@@ -1,45 +1,43 @@
 "use client";
 
 import axios from "axios";
+import {
+  SPECIALS_CONTRACT_ADDRESS,
+  ALIENS_CONTRACT_ADDRESS,
+} from "@/lib/constants";
+import type { NFT } from "@/types/nft";
 
-const SPECIALS_CONTRACT_ADDRESS =
-  process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS;
-const ALIEN_CONTRACT_ADDRESS = process.env.NEXT_PUBLIC_ALIEN_CONTRACT_ADDRESS;
+const NFT_API_BASE =
+  "https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts";
 
-export async function fetchInventory(walletAddress: string) {
+export async function fetchInventory(walletAddress: string): Promise<NFT[]> {
   if (!walletAddress) {
     throw new Error("Wallet address is required to fetch inventory.");
   }
 
-  console.log("🔍 Fetching inventory for:", walletAddress);
-
   try {
     const [packsResponse, aliensResponse] = await Promise.all([
-      axios.get(
-        `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`,
-        {
-          params: { contract_address: SPECIALS_CONTRACT_ADDRESS },
-          headers: { Accept: "application/json" },
-        }
-      ),
-      axios.get(
-        `https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/${walletAddress}/nfts`,
-        {
-          params: { contract_address: ALIEN_CONTRACT_ADDRESS },
-          headers: { Accept: "application/json" },
-        }
-      ),
+      axios.get(`${NFT_API_BASE}/${walletAddress}/nfts`, {
+        params: { contract_address: SPECIALS_CONTRACT_ADDRESS },
+        headers: { Accept: "application/json" },
+      }),
+      axios.get(`${NFT_API_BASE}/${walletAddress}/nfts`, {
+        params: { contract_address: ALIENS_CONTRACT_ADDRESS },
+        headers: { Accept: "application/json" },
+      }),
     ]);
 
-    const packs = (packsResponse.data.result || []).map((nft: any) => ({
+    const packs: NFT[] = (packsResponse.data.result || []).map((nft: any) => ({
       ...nft,
-      collection: "pack",
+      collection: "pack" as const,
     }));
 
-    const aliens = (aliensResponse.data.result || []).map((nft: any) => ({
-      ...nft,
-      collection: "alien",
-    }));
+    const aliens: NFT[] = (aliensResponse.data.result || []).map(
+      (nft: any) => ({
+        ...nft,
+        collection: "alien" as const,
+      })
+    );
 
     return [...packs, ...aliens];
   } catch (error: any) {
@@ -49,30 +47,6 @@ export async function fetchInventory(walletAddress: string) {
     );
   }
 }
-
-// lib/api.ts
-export async function mintPack(
-  walletAddress: string,
-  tokenId: "1" | "2" = "1"
-) {
-  const res = await fetch("/api/mint", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ walletAddress, tokenId }),
-  });
-
-  const data = await res.json();
-
-  if (!res.ok) {
-    throw new Error(data.error || "Failed to mint token");
-  }
-
-  return data;
-}
-
-// lib/api.ts to replace above
 
 export async function mintAsset(walletAddress: string, tokenId: string) {
   const res = await fetch("/api/mint", {

@@ -2,22 +2,10 @@
 
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-
-interface Attribute {
-  trait_type: string;
-  value: string;
-}
-
-interface NFT {
-  token_id: string;
-  name: string;
-  image: string;
-  description: string;
-  balance: string;
-  collection: "pack" | "alien";
-  contractAddress: string;
-  attributes?: Attribute[];
-}
+import { Info, PackageOpen } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getRarity, getRarityGlow, getRarityText } from "@/lib/rarity";
+import type { NFT } from "@/types/nft";
 
 interface Props {
   nft: NFT;
@@ -25,71 +13,60 @@ interface Props {
   onInfo: (nft: NFT) => void;
 }
 
-const rarityOrder: Record<string, number> = {
-  Mythical: 1,
-  Legendary: 2,
-  Rare: 3,
-  Common: 4,
-  Unknown: 5,
-};
-
-const getRarity = (nft: NFT): string =>
-  nft.attributes?.find((attr) => attr.trait_type === "Rarity")?.value ??
-  "Unknown";
-
-const getRarityStyle = (rarity: string | undefined): string => {
-  switch (rarity) {
-    case "Mythical":
-      return "border-4 border-cyan-400 shadow-xl shadow-cyan-400/50";
-    case "Legendary":
-      return "border-4 border-yellow-400 shadow-lg shadow-yellow-400/50";
-    case "Rare":
-      return "border-4 border-purple-400 shadow-md shadow-purple-400/50";
-    case "Common":
-      return "border-4 border-gray-300 shadow shadow-gray-300/50";
-    default:
-      return "border border-muted shadow";
-  }
-};
-
 export function InventoryCard({ nft, onOpen, onInfo }: Props) {
   const rarity = getRarity(nft);
+  const balance = Number.parseInt(nft.balance ?? "1", 10);
+  const isPack = nft.collection === "pack";
 
   return (
     <Card
-      className={`relative flex flex-col justify-between ${getRarityStyle(
-        rarity
-      )}`}
+      className={cn(
+        "group relative flex flex-col justify-between overflow-hidden border-2 bg-card/80 transition-transform duration-200 hover:-translate-y-1",
+        getRarityGlow(rarity)
+      )}
     >
-      {parseInt(nft.balance) > 1 && (
-        <div className="absolute top-2 right-2 bg-primary text-white text-xs px-2 py-0.5 rounded-full shadow-md z-10">
-          x{nft.balance}
+      {balance > 1 && (
+        <div className="absolute right-2 top-2 z-10 rounded-full bg-accent px-2 py-0.5 text-xs font-bold text-accent-foreground shadow">
+          ×{balance}
         </div>
       )}
-      <CardContent className="flex flex-col h-full justify-between">
+      <CardContent className="flex h-full flex-col justify-between gap-3 p-3">
         <div>
-          <div className="aspect-square mb-2">
+          <div className="mb-2 aspect-square overflow-hidden rounded-md bg-secondary">
             <img
               src={nft.image || "/placeholder.svg"}
               alt={nft.name}
-              className="w-full h-full object-cover rounded"
+              loading="lazy"
+              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
           </div>
-          <p className="font-semibold text-center">{nft.name}</p>
-          <p className="text-xs text-center text-muted-foreground">{rarity}</p>
+          <p className="truncate text-center text-sm font-semibold" title={nft.name}>
+            {nft.name}
+          </p>
+          <p
+            className={cn(
+              "text-center text-xs font-medium",
+              getRarityText(rarity)
+            )}
+          >
+            {rarity}
+          </p>
         </div>
-        <div className="flex gap-x-2 mt-4">
-          {nft.collection === "pack" && (
-            <Button className="flex-1" onClick={() => onOpen(nft)}>
-              🎁 Open
+        <div className="flex gap-2">
+          {isPack && (
+            <Button size="sm" className="flex-1" onClick={() => onOpen(nft)}>
+              <PackageOpen className="mr-1.5 h-4 w-4" />
+              Open
             </Button>
           )}
           <Button
+            size="sm"
             variant="secondary"
-            className="flex-1"
+            className={isPack ? "flex-1" : "w-full"}
             onClick={() => onInfo(nft)}
           >
-            ℹ️ Info
+            <Info className="mr-1.5 h-4 w-4" />
+            Info
           </Button>
         </div>
       </CardContent>

@@ -7,8 +7,9 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ExternalLink } from "lucide-react";
+import { CheckCircle2, ExternalLink } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SPECIALS_CONTRACT_ADDRESS } from "@/lib/constants";
 
 interface MintSuccessDialogProps {
   open: boolean;
@@ -27,8 +28,9 @@ export function MintSuccessDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            🎉 {title}
+          <DialogTitle className="flex items-center gap-2 font-heading tracking-wide">
+            <CheckCircle2 className="h-5 w-5 text-accent" />
+            {title}
           </DialogTitle>
           <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
@@ -38,19 +40,19 @@ export function MintSuccessDialog({
             className="w-full"
             onClick={() => onOpenChange(false)}
           >
-            Continue Minting
+            Continue
           </Button>
           <Button
             className="w-full"
-            onClick={() => {
+            onClick={() =>
               window.open(
-                `https://play.sandbox.immutable.com/collection/zkEvm/${process.env.NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS}/`,
+                `https://play.sandbox.immutable.com/collection/zkEvm/${SPECIALS_CONTRACT_ADDRESS}/`,
                 "_blank"
-              );
-            }}
+              )
+            }
           >
             <ExternalLink className="mr-2 h-4 w-4" />
-            View in Immutable
+            View on Immutable Play
           </Button>
         </div>
       </DialogContent>
