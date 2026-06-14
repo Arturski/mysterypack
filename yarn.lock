@@ -2,25 +2,10 @@
 # yarn lockfile v1
 
 
-"@0xsequence/abi@2.3.7", "@0xsequence/abi@^2.0.25":
-  version "2.3.7"
-  resolved "https://registry.yarnpkg.com/@0xsequence/abi/-/abi-2.3.7.tgz#e64d152b2538a015a26d6c6df3d86219a4dd6d46"
-  integrity sha512-r36b4wt2CgreAYCd0urJl0V3Ij1z07caZBuaAGVuFaIhoxsoM7YykMaeyQvYgbSSKoOeTfJH6PqtX8qXDiSGQw==
-
-"@0xsequence/core@^2.0.25":
-  version "2.3.7"
-  resolved "https://registry.yarnpkg.com/@0xsequence/core/-/core-2.3.7.tgz#61feeecab081e3a27dd3085a52500aa666346cb5"
-  integrity sha512-Bj0YmWG9dmsP+13GX3vTy3NCI29XGtn/Hk8Lfr9/KLhas3M3b2nctl0VkBscSj3Miyhu9R9POGdG8hvMjoJNYw==
-  dependencies:
-    "@0xsequence/abi" "2.3.7"
-    "@0xsequence/utils" "2.3.7"
-
-"@0xsequence/utils@2.3.7":
-  version "2.3.7"
-  resolved "https://registry.yarnpkg.com/@0xsequence/utils/-/utils-2.3.7.tgz#3feaaf8571050874fb02413aaf60aceca27b3382"
-  integrity sha512-ygV8DOwxQtTOk7Wc4p3NPMhz1Zoh/F8p9/JmKRe24gu8J6CO1lR/Q3aNCjbYtPNlkPffcO5H1ZLY6whdrWO1JQ==
-  dependencies:
-    js-base64 "^3.7.2"
+"@adraffy/ens-normalize@1.10.0":
+  version "1.10.0"
+  resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.10.0.tgz#d2a39395c587e092d77cbbc80acf956a54f38bf7"
+  integrity sha512-nA9XHtlAkYfJxY7bce8DcN7eKxWWCWkU+1GR9d+U6MbNpfwQp8TI7vqOsBsMcHoT4mBu2kypKoSKnghEzOOq5Q==
 
 "@adraffy/ens-normalize@1.10.1":
   version "1.10.1"
@@ -327,11 +312,6 @@
   resolved "https://registry.yarnpkg.com/@ethereumjs/rlp/-/rlp-4.0.1.tgz#626fabfd9081baab3d0a3074b0c7ecaf674aaa41"
   integrity sha512-tqsQiBQDQdmPWE1xkkBq4rlSW5QZpLOUJ5RJh2/9fug+q9tnUhuZoVLk7s0scUIKTOzEtR72DFBXI4WiZcMpvw==
 
-"@ethereumjs/rlp@^5.0.2":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@ethereumjs/rlp/-/rlp-5.0.2.tgz#c89bd82f2f3bec248ab2d517ae25f5bbc4aac842"
-  integrity sha512-DziebCdg4JpGlEqEdGgXmjqcFoJi+JGulUXwEjsZGAscAQ7MyD/7LE/GVCP29vEQxKc7AAwjT3A2ywHp2xfoCA==
-
 "@ethereumjs/util@^8.1.0":
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/@ethereumjs/util/-/util-8.1.0.tgz#299df97fb6b034e0577ce9f94c7d9d1004409ed4"
@@ -340,25 +320,6 @@
     "@ethereumjs/rlp" "^4.0.1"
     ethereum-cryptography "^2.0.0"
     micro-ftch "^0.3.1"
-
-"@ethereumjs/util@^9.1.0":
-  version "9.1.0"
-  resolved "https://registry.yarnpkg.com/@ethereumjs/util/-/util-9.1.0.tgz#75e3898a3116d21c135fa9e29886565609129bce"
-  integrity sha512-XBEKsYqLGXLah9PNJbgdkigthkG7TAGvlD/sH12beMXEyHDyigfcbdvHhmLyDWgDyOJn4QwiQUaF7yeuhnjdog==
-  dependencies:
-    "@ethereumjs/rlp" "^5.0.2"
-    ethereum-cryptography "^2.2.1"
-
-"@ethereumjs/wallet@^2.0.4":
-  version "2.0.4"
-  resolved "https://registry.yarnpkg.com/@ethereumjs/wallet/-/wallet-2.0.4.tgz#1e11880e4ce70e626b31eb057d120e75f319203d"
-  integrity sha512-XPX9sUhIXdPjA5FpOmPD0weCAz+9OvCA10OdntJGOXVHtQQZRbncPokxkotDFWopExU/Vj+qZZSHqu+jWK5nkw==
-  dependencies:
-    "@ethereumjs/util" "^9.1.0"
-    "@scure/base" "^1.1.7"
-    ethereum-cryptography "^2.2.1"
-    js-md5 "^0.8.3"
-    uuid "^9.0.1"
 
 "@ethersproject/abi@5.8.0", "@ethersproject/abi@^5.1.2", "@ethersproject/abi@^5.5.0", "@ethersproject/abi@^5.8.0":
   version "5.8.0"
@@ -761,50 +722,73 @@
   resolved "https://registry.yarnpkg.com/@hookform/resolvers/-/resolvers-3.10.0.tgz#7bfd18113daca4e57e27e1205b7d5a2d371aa59a"
   integrity sha512-79Dv+3mDF7i+2ajj7SkypSKHhl1cbln1OGavqrsF7p6mbUv11xpqpacPsGDCTRvCSjEEIez2ef1NveSVL3b0Ag==
 
-"@imtbl/blockchain-data@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/blockchain-data/-/blockchain-data-2.1.16.tgz#10084a38074a87d5e09fff1908bf992bca74c9f6"
-  integrity sha512-yfBfW5X2zqY2igPTJ4Fp0KI+JALKY5N00OZFjFYdD0Fl2Swl0Ti9UsPUzQ/vVpZAdjg3bcMPAplAcbdyrJEYUQ==
+"@imtbl/auth-next-client@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/auth-next-client/-/auth-next-client-2.20.0.tgz#3a764ef8b4a8ee5a2037506e7c86c37c08e99287"
+  integrity sha512-N0LuF/x7+bSF+uFN5a4edyQ7oa88+PSUYMXr9iDc3MEVe6jgiajnPRenNTCCEdYeXm3iCEd6SmgciuUG8uYjbQ==
   dependencies:
-    "@imtbl/config" "2.1.16"
-    "@imtbl/generated-clients" "2.1.16"
+    "@imtbl/auth" "2.20.0"
+    "@imtbl/auth-next-server" "2.20.0"
+
+"@imtbl/auth-next-server@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/auth-next-server/-/auth-next-server-2.20.0.tgz#64a8d909353fca1535047f3afa346a1fd965b661"
+  integrity sha512-vd5o7LSqID9kIg5mJKWD2t5UBQDkLnkE+3mAJcQ5fexiGWbeDYM/Di2VEnZnqw07tDoinnUPh6OTpmo5YZHL/A==
+
+"@imtbl/auth@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/auth/-/auth-2.20.0.tgz#2bb7a216204ec47da9f8521a86ba9c4f8e6a01ee"
+  integrity sha512-mdxRE1j5Z6M8mcimqqNkglYQKdIBgHMsrNsAI7G5lVVpjrtSIqTPkwxEieGc15NfBDPwgX0vw/3lV73DBoKXgA==
+  dependencies:
+    "@imtbl/generated-clients" "2.20.0"
+    "@imtbl/metrics" "2.20.0"
+    localforage "^1.10.0"
+    oidc-client-ts "3.4.1"
+
+"@imtbl/blockchain-data@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/blockchain-data/-/blockchain-data-2.20.0.tgz#5b444a30c47bc3c23267bf03873be1c7139a2db9"
+  integrity sha512-A7Mm5ZG3j7VEN/MnGlE3nNWhvF6Q83+PfqPHoMQro5hmgbLsEb1tX9ODk0gx6gU1ZcBVR0+y3Nbkqtygz7zaoQ==
+  dependencies:
+    "@imtbl/config" "2.20.0"
+    "@imtbl/generated-clients" "2.20.0"
     axios "^1.6.5"
 
-"@imtbl/bridge-sdk@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/bridge-sdk/-/bridge-sdk-2.1.16.tgz#bdfe341d31fc8fbd9cbe5b7d32f05cd976b2988c"
-  integrity sha512-4BO/MGyryzTjTuzk3CYyCaDXelopZfsWg/xCeNUUqO7DaLXtCbVib+hT6/Duto8qbXb/pr6ArxTj4A40QQ1bfw==
+"@imtbl/bridge-sdk@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/bridge-sdk/-/bridge-sdk-2.20.0.tgz#1d3f8c0fa5399dd205e0d73a3326d2cf0b4cf17e"
+  integrity sha512-4qwECEcP2SRqfZTITLo+1aE9eNj2uRwXo+slbKrInluLq1r9SRQgOoe36gZB38datHpjfmczN+42vocHc8Zyzg==
   dependencies:
-    "@imtbl/config" "2.1.16"
+    "@imtbl/config" "2.20.0"
     "@jest/globals" "^29.5.0"
     axios "^1.6.5"
     ethers "^6.13.4"
 
-"@imtbl/checkout-sdk@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/checkout-sdk/-/checkout-sdk-2.1.16.tgz#f64497b2fb0339d0461cdc543787c124b1dc593a"
-  integrity sha512-uIA3sb0btWssH6IvWJUbNQnAEm2Yu1NZ26lAfQzRrrD9qrlz2TGybZswccdfOomxpx/RdWzTTNRJ/CllkRIzDQ==
+"@imtbl/checkout-sdk@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/checkout-sdk/-/checkout-sdk-2.20.0.tgz#74ab323bbfcafa8738c6e69dfe07305135f8c187"
+  integrity sha512-7nhUl9ESTM+Zde0wgjyxmkw5LJkszxY6ZxFGXr4NEDBPB87B/s+PM3lDSh2sMp9r/qRCC4zGBf8NhE5PHFIREg==
   dependencies:
-    "@imtbl/blockchain-data" "2.1.16"
-    "@imtbl/bridge-sdk" "2.1.16"
-    "@imtbl/config" "2.1.16"
-    "@imtbl/dex-sdk" "2.1.16"
-    "@imtbl/generated-clients" "2.1.16"
-    "@imtbl/metrics" "2.1.16"
-    "@imtbl/orderbook" "2.1.16"
-    "@imtbl/passport" "2.1.16"
+    "@imtbl/blockchain-data" "2.20.0"
+    "@imtbl/bridge-sdk" "2.20.0"
+    "@imtbl/config" "2.20.0"
+    "@imtbl/dex-sdk" "2.20.0"
+    "@imtbl/generated-clients" "2.20.0"
+    "@imtbl/metrics" "2.20.0"
+    "@imtbl/orderbook" "2.20.0"
+    "@imtbl/passport" "2.20.0"
     "@metamask/detect-provider" "^2.0.0"
     axios "^1.6.5"
     ethers "^6.13.4"
     semver "^7.4.0"
-    uuid "^8.3.2"
+    uuid "^9.0.1"
 
-"@imtbl/config@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/config/-/config-2.1.16.tgz#86fb673c29af743298ac0f10ca973f229acb086d"
-  integrity sha512-eK6hwAcZvTz5+DS4EwlyZzkHoCa0Qjcs6OuE0ZnxRrZHtRI/jvHUc/zBWvJfVSV3AbZSQdu8GQbu+qbCPbS8TQ==
+"@imtbl/config@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/config/-/config-2.20.0.tgz#677f4686d9c3420da873b91c81b6948042900ba5"
+  integrity sha512-7DMdOheEt9A9H6V7zztUae4M0XKwDU2ddt6zUonjdc9SLyXRWMqtcUkRn7vJK/RqPINz+k1PhVTR7QDgQBl7mw==
   dependencies:
-    "@imtbl/metrics" "2.1.16"
+    "@imtbl/metrics" "2.20.0"
 
 "@imtbl/contracts@^2.2.14":
   version "2.2.17"
@@ -823,156 +807,122 @@
     solidity-bits "^0.4.0"
     solidity-bytes-utils "^0.8.0"
 
-"@imtbl/dex-sdk@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/dex-sdk/-/dex-sdk-2.1.16.tgz#07748edad12f4e2d3b601f7a204bc3130018c1a3"
-  integrity sha512-MoG3/4KgDdXCDKuZ8Clo77ATlEiOTIY4Xebzc/jo4tjq0wWflhTY66nEeaQSTFY2eSlV/YhgRh5o01QfmdMk1g==
+"@imtbl/dex-sdk@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/dex-sdk/-/dex-sdk-2.20.0.tgz#69b25afb051cf4d3771d263e5138a3f86bd8d1c5"
+  integrity sha512-K44FBWfx5O4V/HRuaGMvrNzwKRdLWbBStpaP9WL/KQK2+RwoOrJCMyLa1cwj64jnWMzA+S0nvj30LH5BYD7zhA==
   dependencies:
-    "@imtbl/config" "2.1.16"
+    "@imtbl/config" "2.20.0"
     "@uniswap/sdk-core" "^3.0.1"
     "@uniswap/swap-router-contracts" "^1.3.1"
     "@uniswap/v3-sdk" "^3.9.0"
     ethers "^6.13.4"
 
-"@imtbl/generated-clients@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/generated-clients/-/generated-clients-2.1.16.tgz#fba5544d4b9fe3c533907a322f8f5b7b96889c8f"
-  integrity sha512-Kyi5J5OV4Y2WV5i2fy8o8ZyVKwJPvuNK/zD+egwaujiBr2u0KKBZZI7iCXt928PS1Fthi8DVUZyNoi9K/rchfw==
+"@imtbl/generated-clients@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/generated-clients/-/generated-clients-2.20.0.tgz#f78ec74ab35c6bbaa3b55c0b641235b904c5c24f"
+  integrity sha512-OcAyqslwJj3lQ0vBIC64BswhfswQYJXvTV3FM7JLmXaO0pvDRLVhPtNWgbgI0W91/7ekye5hycI/ZGbaJDURsg==
   dependencies:
     axios "^1.6.5"
 
-"@imtbl/metrics@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/metrics/-/metrics-2.1.16.tgz#67505caa635cc2a80141787839f7d879129dde82"
-  integrity sha512-EJl7qyWebNHGjgBcS17disEIGOAuEsQM6us+zFUtdwErYAN9jRrS5bp06CWvl8fUoz8QC1loJAuXGL+g5sdNgg==
+"@imtbl/metrics@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/metrics/-/metrics-2.20.0.tgz#a83aa6620c15291ae02aef4f9f67939965b5090b"
+  integrity sha512-v3Oe95A/yfUT+zrASSoXDk680K7VocKIUwsMGE9al/o9GJnCAV05QS+iPfGphGh16Y7+fqWbIQwHAd2YhCLjGg==
   dependencies:
-    axios "^1.6.5"
     global-const "^0.1.2"
     lru-memorise "0.3.0"
 
-"@imtbl/minting-backend@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/minting-backend/-/minting-backend-2.1.16.tgz#5f09d3abbcb6c018004944cca9ec5c63e3fe4bfe"
-  integrity sha512-wxO1ehzTVS4aX5Js1axBrp353+55nyzyJAPZxX6/NNDg5m5NFNKmXKjaitqPtKl1CYYXq3AROksmusbPMXkl8w==
+"@imtbl/minting-backend@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/minting-backend/-/minting-backend-2.20.0.tgz#66e10d2cc784af9a9aeb18300cded59c33bf82bf"
+  integrity sha512-GCnPfRAl2nPYejg2rNBx1GcBzemJTOzqCkSjRw6szVdw8aCo4FYULOo6pyXh0lmuSiAPoQGYjfZnwZ+mQzKk/w==
   dependencies:
-    "@imtbl/blockchain-data" "2.1.16"
-    "@imtbl/config" "2.1.16"
-    "@imtbl/generated-clients" "2.1.16"
-    "@imtbl/metrics" "2.1.16"
-    "@imtbl/webhook" "2.1.16"
-    uuid "^8.3.2"
+    "@imtbl/blockchain-data" "2.20.0"
+    "@imtbl/config" "2.20.0"
+    "@imtbl/generated-clients" "2.20.0"
+    "@imtbl/metrics" "2.20.0"
+    "@imtbl/webhook" "2.20.0"
+    uuid "^9.0.1"
   optionalDependencies:
     pg "^8.11.5"
     prisma "^5.13.0"
 
-"@imtbl/orderbook@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/orderbook/-/orderbook-2.1.16.tgz#8faa1e5c5ca38403458717bbe41c8f5611489ed2"
-  integrity sha512-8TZA7GHg6kvZC4pvNkznQsfeMRBG/Q3mwh4LfZWbY8Sz0M0b1ToPvdrmVg0+T/UAO54fDGAWlRDVhmQ77OVCSA==
+"@imtbl/orderbook@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/orderbook/-/orderbook-2.20.0.tgz#f5d140c2c2890e2bab2a9cd8fbbc2d6c2756adc4"
+  integrity sha512-V8F3EzqfXFe4qL+dy5xn8nAnfYdkH/CeHgchGVk6RCS31KHmKt9zdFAOqSTbHIwTDRAc1PrVRrCchSTuSSJ9rA==
   dependencies:
-    "@imtbl/config" "2.1.16"
-    "@imtbl/metrics" "2.1.16"
+    "@imtbl/config" "2.20.0"
+    "@imtbl/metrics" "2.20.0"
     "@opensea/seaport-js" "4.0.3"
     axios "^1.6.5"
     ethers "^6.13.4"
     form-data "^4.0.0"
     merkletreejs "^0.3.11"
 
-"@imtbl/passport@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/passport/-/passport-2.1.16.tgz#b775bed540ac23db0c67343c0c000ae34e258bc6"
-  integrity sha512-tTfqAzC3EgO0n2Ey8XqEPaQ/XhJW8TXlLGlwH+NSm0N/WTWwkWA6Ds8JXBtnfHW1MvaRLOMiC59Z2r2f4hGMvQ==
+"@imtbl/passport@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/passport/-/passport-2.20.0.tgz#5b793741183c3b0ae76bd7d3adfc801fd0f5e318"
+  integrity sha512-1bcPuAbu0/QWrHCdJsDv9yhxTPjyJRk3UJ09ZZ3Xs1Vchg6LrHcPKcfznLYumZO/Syc2q5UIEDmA2kpm6gJ6XQ==
   dependencies:
-    "@0xsequence/abi" "^2.0.25"
-    "@0xsequence/core" "^2.0.25"
-    "@imtbl/config" "2.1.16"
-    "@imtbl/generated-clients" "2.1.16"
-    "@imtbl/metrics" "2.1.16"
-    "@imtbl/toolkit" "2.1.16"
-    "@imtbl/x-client" "2.1.16"
-    "@imtbl/x-provider" "2.1.16"
-    "@magic-ext/oidc" "12.0.5"
-    "@magic-sdk/provider" "^29.0.5"
-    "@metamask/detect-provider" "^2.0.0"
-    axios "^1.6.5"
+    "@imtbl/auth" "2.20.0"
+    "@imtbl/config" "2.20.0"
+    "@imtbl/generated-clients" "2.20.0"
+    "@imtbl/metrics" "2.20.0"
+    "@imtbl/toolkit" "2.20.0"
+    "@imtbl/wallet" "2.20.0"
     ethers "^6.13.4"
-    events "^3.3.0"
-    jwt-decode "^3.1.2"
     localforage "^1.10.0"
-    magic-sdk "^29.0.5"
-    oidc-client-ts "2.4.0"
-    uuid "^8.3.2"
+    oidc-client-ts "3.4.1"
 
-"@imtbl/sdk@^2.0.3":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/sdk/-/sdk-2.1.16.tgz#32694578d615aecf431e45838c9c6637697124d1"
-  integrity sha512-NT6MBoITawyi/ZdNddPQ0gFzOjujxgDMTmPEB2iJ1UWdOEgRd9g6v1lPb7jae8ZSq9hqGGFMmITxY/dx+lyjJQ==
+"@imtbl/sdk@^2":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/sdk/-/sdk-2.20.0.tgz#2a5ba16a9582b963ab17c2d35bc75010faa730e7"
+  integrity sha512-nXU7XeyW9k8L37eDjqqvkpXWXCfICKAykWt1HsQDS725oImNTIQEjS9RQZPUyNNwGsMa8miZ0sY/xBgIi0zyvw==
   dependencies:
-    "@imtbl/blockchain-data" "2.1.16"
-    "@imtbl/checkout-sdk" "2.1.16"
-    "@imtbl/config" "2.1.16"
-    "@imtbl/minting-backend" "2.1.16"
-    "@imtbl/orderbook" "2.1.16"
-    "@imtbl/passport" "2.1.16"
-    "@imtbl/webhook" "2.1.16"
-    "@imtbl/x-client" "2.1.16"
-    "@imtbl/x-provider" "2.1.16"
+    "@imtbl/auth" "2.20.0"
+    "@imtbl/auth-next-client" "2.20.0"
+    "@imtbl/auth-next-server" "2.20.0"
+    "@imtbl/blockchain-data" "2.20.0"
+    "@imtbl/checkout-sdk" "2.20.0"
+    "@imtbl/config" "2.20.0"
+    "@imtbl/minting-backend" "2.20.0"
+    "@imtbl/orderbook" "2.20.0"
+    "@imtbl/passport" "2.20.0"
+    "@imtbl/wallet" "2.20.0"
+    "@imtbl/webhook" "2.20.0"
 
-"@imtbl/toolkit@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/toolkit/-/toolkit-2.1.16.tgz#c14105fe7c47ae133f262b8fcb8680e9bc5e23a5"
-  integrity sha512-6ilLB/v3d1DVYHbnt+PVF8zS6hZKS1xY3C/GdeomFD0/JGi8AlQHpMLgV8/1rg/j9M0ZS23aKx4v5W4pPiKcng==
+"@imtbl/toolkit@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/toolkit/-/toolkit-2.20.0.tgz#9d697e5a119aaa0e4620eebff6fb1554cfe5137d"
+  integrity sha512-OFp4Xi60whIs4Ea7HmapaKfmt9gAVvxdRPXwZggqbb6UZAogiMlfv5CJ4wQDXlz37zvnGKfP5scbYc53y5iAMg==
   dependencies:
-    "@imtbl/x-client" "2.1.16"
-    "@magic-ext/oidc" "12.0.5"
     "@metamask/detect-provider" "^2.0.0"
     axios "^1.6.5"
     bn.js "^5.2.1"
     enc-utils "^3.0.0"
     ethers "^6.13.4"
-    magic-sdk "^29.0.5"
-    oidc-client-ts "2.4.0"
+    oidc-client-ts "3.4.1"
 
-"@imtbl/webhook@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/webhook/-/webhook-2.1.16.tgz#2e6ea5fdf4be98ce216b66602221d8200fbc7355"
-  integrity sha512-6yG83PjdElppiEBRdooF22fgRA3xVWxc2eQT6UJs5hRT7pacx/rHtfaW0LthkPlPEpX8ul+/oYIk34CGyz2b3Q==
+"@imtbl/wallet@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/wallet/-/wallet-2.20.0.tgz#aeb61caa95a8b7bee4f78aeca79c6fb4b36f4072"
+  integrity sha512-+I4TM8kS+EaggZh5Lbxk7y3C/IMd0D4Qck6hseHa0C2H1NzvY3etQct4p6uy5J4TdglgMeEI+2T+WngzC/mwfw==
   dependencies:
-    "@imtbl/config" "2.1.16"
-    "@imtbl/generated-clients" "2.1.16"
+    "@imtbl/auth" "2.20.0"
+    "@imtbl/generated-clients" "2.20.0"
+    "@imtbl/metrics" "2.20.0"
+    viem "~2.18.0"
+
+"@imtbl/webhook@2.20.0":
+  version "2.20.0"
+  resolved "https://registry.yarnpkg.com/@imtbl/webhook/-/webhook-2.20.0.tgz#e585304b9b3a1a2c15b8a9fe3b9b76e8c7ad3b05"
+  integrity sha512-QGLG8CiODODK+qAU7rz9O0vJbbDMOYSubua+CeWbohVpK2FlQPdkp0jAnCXe0kvB0YIPuNfj1TXcQkIUQHh8WQ==
+  dependencies:
+    "@imtbl/config" "2.20.0"
+    "@imtbl/generated-clients" "2.20.0"
     sns-validator "^0.3.5"
-
-"@imtbl/x-client@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/x-client/-/x-client-2.1.16.tgz#22f801fd2252e6c0ac156ad11f7b1abe528b3c6f"
-  integrity sha512-SpBNevg9rWhYAQexopLfa5m2sPZfCpT58QsAKpJeYx9FeuFi/deTDJ0rgkPvxfEaSeY37nv+nO9nAgKw4ovBaA==
-  dependencies:
-    "@ethereumjs/wallet" "^2.0.4"
-    "@imtbl/config" "2.1.16"
-    "@imtbl/generated-clients" "2.1.16"
-    axios "^1.6.5"
-    bn.js "^5.2.1"
-    elliptic "^6.6.1"
-    enc-utils "^3.0.0"
-    ethers "^6.13.4"
-    hash.js "^1.1.7"
-
-"@imtbl/x-provider@2.1.16":
-  version "2.1.16"
-  resolved "https://registry.yarnpkg.com/@imtbl/x-provider/-/x-provider-2.1.16.tgz#5178c0944221b89a860f82c9fd2adf284cc5f4ab"
-  integrity sha512-R/fyMlb3E/HPMru5blVr50FjBpEuS/rxs4vTcHCbU88rJsMl3lrUAnlj2QbkZBPl4TVHg3vtpevRKZKXaSGWDw==
-  dependencies:
-    "@imtbl/config" "2.1.16"
-    "@imtbl/generated-clients" "2.1.16"
-    "@imtbl/toolkit" "2.1.16"
-    "@imtbl/x-client" "2.1.16"
-    "@magic-ext/oidc" "12.0.5"
-    "@metamask/detect-provider" "^2.0.0"
-    axios "^1.6.5"
-    enc-utils "^3.0.0"
-    ethers "^6.13.4"
-    magic-sdk "^29.0.5"
-    oidc-client-ts "2.4.0"
 
 "@isaacs/cliui@^8.0.2":
   version "8.0.2"
@@ -1121,29 +1071,6 @@
     "@jridgewell/resolve-uri" "^3.1.0"
     "@jridgewell/sourcemap-codec" "^1.4.14"
 
-"@magic-ext/oidc@12.0.5":
-  version "12.0.5"
-  resolved "https://registry.yarnpkg.com/@magic-ext/oidc/-/oidc-12.0.5.tgz#bf20c00626c3bb59d98ec79c638cea7ae08ec151"
-  integrity sha512-EAmmRRZn/c5jmxHZ1H3IHtEqUKHYrsRtH9O+WuMFOZMv0llef/9MBa4DiRZkpnB0EPKb2hwsY7us8qk/LaFRNA==
-
-"@magic-sdk/commons@^25.0.5":
-  version "25.0.5"
-  resolved "https://registry.yarnpkg.com/@magic-sdk/commons/-/commons-25.0.5.tgz#76cfdc9f1e2b5898ea3355a451090db809a21019"
-  integrity sha512-/qXYCAs4Y8XISyTHzytoWf4CDejLOynW53X9XFnGJt9c6jFV7FoeuN0n/+TIngjHVUu3v+wbQoJNeFzzCE2y5g==
-
-"@magic-sdk/provider@^29.0.5":
-  version "29.0.5"
-  resolved "https://registry.yarnpkg.com/@magic-sdk/provider/-/provider-29.0.5.tgz#0d6ad333586480ee15193f0014210ab0e2f4f9cb"
-  integrity sha512-rwTahW2hQ/c6xz1khPJOdwut+w6k7/WbhLtk4TEMkF8sZ08jHK+4p4Fls8iH8a0NCaQOU6RbSvkGFdUnqVVW9w==
-  dependencies:
-    "@magic-sdk/types" "^24.18.1"
-    eventemitter3 "^4.0.4"
-
-"@magic-sdk/types@^24.18.1":
-  version "24.18.1"
-  resolved "https://registry.yarnpkg.com/@magic-sdk/types/-/types-24.18.1.tgz#aa7f6f8d5a6ef07ea14f35e19dd75f8cfc0b83b1"
-  integrity sha512-r/06vHruERropfAIF1pZlYAqMLpGJeSy0YjJJ/8L3kA2EKy+Di0+r0DFJjXs58LUZtDN0GgSCOYTt7r49W6/Ug==
-
 "@metamask/detect-provider@^2.0.0":
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/@metamask/detect-provider/-/detect-provider-2.0.0.tgz#4bc2795e5e6f7d8b84b2e845058d2f222c99917d"
@@ -1217,12 +1144,26 @@
   dependencies:
     "@noble/hashes" "1.3.2"
 
+"@noble/curves@1.4.0":
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.4.0.tgz#f05771ef64da724997f69ee1261b2417a49522d6"
+  integrity sha512-p+4cb332SFCrReJkCYe8Xzm0OWi4Jji5jVdIZRL/PmacmDkFNw6MrrV+gGpiPxLHbV+zKFRywUWbaseT+tZRXg==
+  dependencies:
+    "@noble/hashes" "1.4.0"
+
 "@noble/curves@1.4.2", "@noble/curves@~1.4.0":
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.4.2.tgz#40309198c76ed71bc6dbf7ba24e81ceb4d0d1fe9"
   integrity sha512-TavHr8qycMChk8UwMld0ZDRvatedkzWfH8IiaeGCfymOP5i0hSCozz9vHOL0nkwk7HRMlFnAiKpS2jrUmSybcw==
   dependencies:
     "@noble/hashes" "1.4.0"
+
+"@noble/curves@^1.4.0":
+  version "1.9.7"
+  resolved "https://registry.yarnpkg.com/@noble/curves/-/curves-1.9.7.tgz#79d04b4758a43e4bca2cbdc62e7771352fa6b951"
+  integrity sha512-gbKGcRUYIjA3/zCCNaWDciTMFI0dCkvou3TL8Zmy5Nc7sJ47a0jtOeZoTaMxkuqRo9cRhjOdZJXegxYE5FN/xw==
+  dependencies:
+    "@noble/hashes" "1.8.0"
 
 "@noble/hashes@1.2.0", "@noble/hashes@~1.2.0":
   version "1.2.0"
@@ -1238,6 +1179,11 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.4.0.tgz#45814aa329f30e4fe0ba49426f49dfccdd066426"
   integrity sha512-V1JJ1WTRUqHHrOSh597hURcMqVKVGL/ea3kv0gSnEdsEZ0/+VyPghM1lMNGc00z7CIQorSvbKpuJkxvuHbvdbg==
+
+"@noble/hashes@1.8.0":
+  version "1.8.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.8.0.tgz#cee43d801fcef9644b11b8194857695acd5f815a"
+  integrity sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==
 
 "@noble/hashes@^1.4.0":
   version "1.7.1"
@@ -2062,11 +2008,6 @@
   resolved "https://registry.yarnpkg.com/@rari-capital/solmate/-/solmate-6.4.0.tgz#c6ee4110c8075f14b415e420b13bd8bdbbc93d9e"
   integrity sha512-BXWIHHbG5Zbgrxi0qVYe0Zs+bfx+XgOciVUACjuIApV0KzC0kY8XdO1higusIei/ZKCC+GUKdcdQZflxYPUTKQ==
 
-"@scure/base@^1.1.7":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.2.4.tgz#002eb571a35d69bdb4c214d0995dff76a8dcd2a9"
-  integrity sha512-5Yy9czTO47mqz+/J8GM6GIId4umdCk1wc1q8rKERQulIoc8VP9pzDcghv10Tl2E7R96ZUx/PhND3ESYUQX8NuQ==
-
 "@scure/base@~1.1.0", "@scure/base@~1.1.6":
   version "1.1.9"
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.9.tgz#e5e142fbbfe251091f9c5f1dd4c834ac04c3dbd1"
@@ -2451,6 +2392,11 @@
     "@openzeppelin/contracts" "3.4.1-solc-0.7-2"
     "@uniswap/v3-core" "1.0.0"
     "@uniswap/v3-periphery" "^1.0.1"
+
+abitype@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/abitype/-/abitype-1.0.5.tgz#29d0daa3eea867ca90f7e4123144c1d1270774b6"
+  integrity sha512-YzDhti7cjlfaBhHutMaboYB21Ha3rXR9QTkNJFzYC4kC8YclaiwPBBBJY8ejFdu2wnJeZCVZSMlQJ7fi8S6hsw==
 
 adm-zip@^0.4.16:
   version "0.4.16"
@@ -3178,7 +3124,7 @@ electron-to-chromium@^1.5.73:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.134.tgz#d90008c4f8a506c1a6d1b329f922d83e18904101"
   integrity sha512-zSwzrLg3jNP3bwsLqWHmS5z2nIOQ5ngMnfMZOWWtXnqqQkPVyOipxK98w+1beLw1TB+EImPNcG8wVP/cLVs2Og==
 
-elliptic@6.6.1, elliptic@^6.5.2, elliptic@^6.5.7, elliptic@^6.6.1:
+elliptic@6.6.1, elliptic@^6.5.2, elliptic@^6.5.7:
   version "6.6.1"
   resolved "https://registry.yarnpkg.com/elliptic/-/elliptic-6.6.1.tgz#3b8ffb02670bf69e382c7f65bf524c97c5405c06"
   integrity sha512-RaddvvMatK2LJHqFJ+YA4WysVN5Ita9E35botqIYspQ4TkRAlCicdzKOjlyv/1Za5RyTNn7di//eEV0uTAfe3g==
@@ -3346,7 +3292,7 @@ ethereum-cryptography@^1.0.3:
     "@scure/bip32" "1.1.5"
     "@scure/bip39" "1.1.1"
 
-ethereum-cryptography@^2.0.0, ethereum-cryptography@^2.1.2, ethereum-cryptography@^2.2.1:
+ethereum-cryptography@^2.0.0, ethereum-cryptography@^2.1.2:
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/ethereum-cryptography/-/ethereum-cryptography-2.2.1.tgz#58f2810f8e020aecb97de8c8c76147600b0b8ccf"
   integrity sha512-r/W8lkHSiTLxUxW8Rf3u4HGB0xQweG2RyETjywylKZSzLWoWAijRz8WCuOtJ6wah+avllXBqZuk29HCCvhEIRg==
@@ -3458,15 +3404,10 @@ ethjs-util@0.1.6, ethjs-util@^0.1.6:
     is-hex-prefixed "1.0.0"
     strip-hex-prefix "1.0.0"
 
-eventemitter3@^4.0.1, eventemitter3@^4.0.4:
+eventemitter3@^4.0.1:
   version "4.0.7"
   resolved "https://registry.yarnpkg.com/eventemitter3/-/eventemitter3-4.0.7.tgz#2de9b68f6528d5644ef5c59526a1b4a07306169f"
   integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
-
-events@^3.3.0:
-  version "3.3.0"
-  resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
-  integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
 evp_bytestokey@^1.0.3:
   version "1.0.3"
@@ -3995,6 +3936,11 @@ isexe@^2.0.0:
   resolved "https://registry.yarnpkg.com/isexe/-/isexe-2.0.0.tgz#e8fbf374dc556ff8947a10dcb0572d633f2cfa10"
   integrity sha512-RHxMLp9lnKHGHRng9QFhRCMbYAcVpn69smSGcq3f36xjgVVWThj4qqLbTLlq7Ssj8B+fIQ1EuCEGI2lKsyQeIw==
 
+isows@1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/isows/-/isows-1.0.4.tgz#810cd0d90cc4995c26395d2aa4cfa4037ebdf061"
+  integrity sha512-hEzjY+x9u9hPmBom9IIAqdJCwNLax+xrPb51vEPpERoFlIxgmZcHzsT5jKG06nvInKOBGvReAVz80Umed5CczQ==
+
 istanbul-lib-coverage@^3.2.0:
   version "3.2.2"
   resolved "https://registry.yarnpkg.com/istanbul-lib-coverage/-/istanbul-lib-coverage-3.2.2.tgz#2d166c4b0644d43a39f04bf6c2edd1e585f31756"
@@ -4146,16 +4092,6 @@ jiti@^1.21.6:
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.21.7.tgz#9dd81043424a3d28458b193d965f0d18a2300ba9"
   integrity sha512-/imKNG4EbWNrVjoNC/1H5/9GFy+tqjGBHCaSsN+P2RnPqjsLmv6UD3Ej+Kj8nBWaRAwyk7kK5ZUc+OEatnTR3A==
 
-js-base64@^3.7.2:
-  version "3.7.7"
-  resolved "https://registry.yarnpkg.com/js-base64/-/js-base64-3.7.7.tgz#e51b84bf78fbf5702b9541e2cb7bfcb893b43e79"
-  integrity sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==
-
-js-md5@^0.8.3:
-  version "0.8.3"
-  resolved "https://registry.yarnpkg.com/js-md5/-/js-md5-0.8.3.tgz#921bab7efa95bfc9d62b87ee08a57f8fe4305b69"
-  integrity sha512-qR0HB5uP6wCuRMrWPTrkMaev7MJZwJuuw4fnwAzRgP4J4/F8RwtodOKpGp4XpqsLBFzzgqIO42efFAyz2Et6KQ==
-
 js-sha3@0.8.0:
   version "0.8.0"
   resolved "https://registry.yarnpkg.com/js-sha3/-/js-sha3-0.8.0.tgz#b9b7a5da73afad7dedd0f8c463954cbde6818840"
@@ -4208,10 +4144,10 @@ jsonfile@^4.0.0:
   optionalDependencies:
     graceful-fs "^4.1.6"
 
-jwt-decode@^3.1.2:
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-3.1.2.tgz#3fb319f3675a2df0c2895c8f5e9fa4b67b04ed59"
-  integrity sha512-UfpWE/VZn0iP50d8cz9NrZLM9lSWhcJ+0Gt/nm4by88UL+J1SiKN8/5dkjMmbEzwL2CAe+67GsegCbIKtbp75A==
+jwt-decode@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/jwt-decode/-/jwt-decode-4.0.0.tgz#2270352425fd413785b2faf11f6e755c5151bd4b"
+  integrity sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==
 
 keccak@^3.0.0, keccak@^3.0.2:
   version "3.0.4"
@@ -4239,7 +4175,7 @@ lines-and-columns@^1.1.6:
   resolved "https://registry.yarnpkg.com/lines-and-columns/-/lines-and-columns-1.2.4.tgz#eca284f75d2965079309dc0ad9255abb2ebc1632"
   integrity sha512-7ylylesZQ/PV29jhEDl3Ufjo6ZX7gCqJr5F7PKrqc93v7fzSymt1BpwEU8nAUXs8qzzvqhbjhK5QZg6Mt/HkBg==
 
-localforage@^1.10.0, localforage@^1.7.4:
+localforage@^1.10.0:
   version "1.10.0"
   resolved "https://registry.yarnpkg.com/localforage/-/localforage-1.10.0.tgz#5c465dc5f62b2807c3a84c0c6a1b1b3212781dd4"
   integrity sha512-14/H1aX7hzBBmmh7sGPd+AOMkkIrHM3Z1PAyGgZigA1H1p5O5ANnMyWzvpAETtG68/dC4pC0ncy3+PPGzXZHPg==
@@ -4308,16 +4244,6 @@ lucide-react@^0.476.0:
   version "0.476.0"
   resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.476.0.tgz#a33354832ea85b2c3764faf09d85c9a9332f7f60"
   integrity sha512-x6cLTk8gahdUPje0hSgLN1/MgiJH+Xl90Xoxy9bkPAsMPOUiyRSKR4JCDPGVCEpyqnZXH3exFWNItcvra9WzUQ==
-
-magic-sdk@^29.0.5:
-  version "29.0.5"
-  resolved "https://registry.yarnpkg.com/magic-sdk/-/magic-sdk-29.0.5.tgz#1fe6cd2e1d4ce0fe7f35003bf082278b178ed200"
-  integrity sha512-naKw1gIzC+Hy9i/cg0AnrvgOcdWQFy73boGy17WzPbj1imfM3WxiEOeXrBv7/Yp1/P5VrKKeWZEw9tC4hI1yGQ==
-  dependencies:
-    "@magic-sdk/commons" "^25.0.5"
-    "@magic-sdk/provider" "^29.0.5"
-    "@magic-sdk/types" "^24.18.1"
-    localforage "^1.7.4"
 
 makeerror@1.0.12:
   version "1.0.12"
@@ -4587,13 +4513,12 @@ obliterator@^2.0.0:
   resolved "https://registry.yarnpkg.com/obliterator/-/obliterator-2.0.5.tgz#031e0145354b0c18840336ae51d41e7d6d2c76aa"
   integrity sha512-42CPE9AhahZRsMNslczq0ctAEtqk8Eka26QofnqC346BZdHDySk3LWka23LI7ULIw11NmltpiLagIq8gBozxTw==
 
-oidc-client-ts@2.4.0:
-  version "2.4.0"
-  resolved "https://registry.yarnpkg.com/oidc-client-ts/-/oidc-client-ts-2.4.0.tgz#764c8a33de542026e2798de9849ce8049047d7e5"
-  integrity sha512-WijhkTrlXK2VvgGoakWJiBdfIsVGz6CFzgjNNqZU1hPKV2kyeEaJgLs7RwuiSp2WhLfWBQuLvr2SxVlZnk3N1w==
+oidc-client-ts@3.4.1:
+  version "3.4.1"
+  resolved "https://registry.yarnpkg.com/oidc-client-ts/-/oidc-client-ts-3.4.1.tgz#7cad95ba7213cb93b7c141965ce03ad658baa30f"
+  integrity sha512-jNdst/U28Iasukx/L5MP6b274Vr7ftQs6qAhPBCvz6Wt5rPCA+Q/tUmCzfCHHWweWw5szeMy2Gfrm1rITwUKrw==
   dependencies:
-    crypto-js "^4.2.0"
-    jwt-decode "^3.1.2"
+    jwt-decode "^4.0.0"
 
 once@^1.3.0:
   version "1.4.0"
@@ -5745,6 +5670,21 @@ victory-vendor@^36.6.8:
     d3-time "^3.0.0"
     d3-timer "^3.0.1"
 
+viem@~2.18.0:
+  version "2.18.8"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.18.8.tgz#5e65050ddc3bdc0f928c0ca22b33bc720bf36639"
+  integrity sha512-Fi5d9fd/LBiVtJ5eV2c99yrdt4dJH5Vbkf2JajwCqHYuV4ErSk/sm+L6Ru3rzT67rfRHSOQibTZxByEBua/WLw==
+  dependencies:
+    "@adraffy/ens-normalize" "1.10.0"
+    "@noble/curves" "1.4.0"
+    "@noble/hashes" "1.4.0"
+    "@scure/bip32" "1.4.0"
+    "@scure/bip39" "1.3.0"
+    abitype "1.0.5"
+    isows "1.0.4"
+    webauthn-p256 "0.0.5"
+    ws "8.17.1"
+
 walker@^1.0.8:
   version "1.0.8"
   resolved "https://registry.yarnpkg.com/walker/-/walker-1.0.8.tgz#bd498db477afe573dc04185f011d3ab8a8d7653f"
@@ -5765,6 +5705,14 @@ web3-utils@^1.3.4:
     number-to-bn "1.7.0"
     randombytes "^2.1.0"
     utf8 "3.0.0"
+
+webauthn-p256@0.0.5:
+  version "0.0.5"
+  resolved "https://registry.yarnpkg.com/webauthn-p256/-/webauthn-p256-0.0.5.tgz#0baebd2ba8a414b21cc09c0d40f9dd0be96a06bd"
+  integrity sha512-drMGNWKdaixZNobeORVIqq7k5DsRC9FnG201K2QjeOoQLmtSDaSsVZdkg6n5jUALJKcAG++zBPJXmv6hy0nWFg==
+  dependencies:
+    "@noble/curves" "^1.4.0"
+    "@noble/hashes" "^1.4.0"
 
 which@^2.0.1:
   version "2.0.2"
