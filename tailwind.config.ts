@@ -10,6 +10,10 @@ const config: Config = {
   ],
   theme: {
   	extend: {
+  		fontFamily: {
+  			body: ['var(--font-body)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  			heading: ['var(--font-heading)', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+  		},
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',

@@ -1,6 +1,11 @@
-# Alien Hub – Mystery Pack Demo
+# Alien Hub – Mystery Pack
 
-A **work-in-progress** React/Next.js app showcasing a Mystery Pack NFT opening flow using the [Immutable zkEVM](https://www.immutable.com/zkEVM) SDK.
+A React/Next.js dApp showcasing a Mystery Pack NFT opening flow on the
+[Immutable zkEVM](https://www.immutable.com/zkEVM) (sandbox/testnet).
+
+Users connect with **Immutable Passport**, mint an ERC-1155 Mystery Pack, then
+open it — the pack is **burned on-chain**, a backend webhook mints 3 random Alien
+NFTs in response, and the frontend reveals them with an animated flow.
 
 🌐 Live demo: [https://mysterypack-eight.vercel.app/](https://mysterypack-eight.vercel.app/)
 
@@ -8,70 +13,92 @@ A **work-in-progress** React/Next.js app showcasing a Mystery Pack NFT opening f
 
 ## Getting Started
 
-First,configutr the environment variables in `.env` then run the development server:
+Configure the environment variables in `.env.local` (see `.env.example`), then:
 
 ```bash
-npm install
-npm run dev
-# or
-yarn
+yarn install
 yarn dev
 ```
 
-### 🧪 Features
+If your project is linked to Vercel you can pull the env vars directly:
 
-- Mystery Pack NFTs (ERC-1155) that burn and reveal collectible Alien NFTs.
-- Beautiful reveal animation flow powered by **Framer Motion** and video playback.
-- Visual rarity styling with rarity-aware sorting.
-- Detailed metadata modal view for each NFT.
-- Filtering between **Special Items (Packs, VIP Pass)** and **Aliens**.
-- Wallet connection via Immutable Passport (EIP-1193 context).
-- Inventory updated automatically after opening packs.
+```bash
+vercel env pull .env.local
+```
 
----
+### Environment variables
 
-### 🛠️ Tech Stack
-
-- **Next.js** with App Router
-- **Tailwind CSS** for utility-first styling
-- **Framer Motion** for animations
-- **Immutable zkEVM SDK**
-- **Chakra UI (partially)** and custom UI components
-- Backend-less frontend using Immutable APIs
+| Variable | Purpose |
+| --- | --- |
+| `NEXT_PUBLIC_PUBLISHABLE_KEY` | Immutable Hub publishable key |
+| `NEXT_PUBLIC_CLIENT_ID` | Passport client id |
+| `NEXT_PUBLIC_IMMUTABLE_REDIRECT_URI` | Passport login redirect (`/redirect`) |
+| `NEXT_PUBLIC_API_BASE_URL` | Passport logout redirect |
+| `NEXT_PUBLIC_SPECIALS_CONTRACT_ADDRESS` | ERC-1155 contract for Packs (id 1) & VIP Pass (id 2) |
+| `NEXT_PUBLIC_ALIENS_CONTRACT_ADDRESS` | ERC-721/1155 contract the Aliens are minted into |
+| `API_KEY` | Immutable Blockchain Data API key (server-side minting) |
 
 ---
 
-### ⚠️ Known Limitations
+## Features
 
-- Currently uses **polling** after pack burn to detect new Alien NFTs.
-- Ideal solution would use a **webhook backend + WebSocket frontend** pattern:
-  - The backend listens for on-chain events (e.g., via Alchemy/Blockscout or Immutable APIs).
-  - Emits a signal (via WebSocket or push) to notify frontend of inventory updates.
-- Polling may cause small delays in revealing NFTs, depending on block processing times.
-
----
-
-### 📝 TODO
-
-- [ ] Optimize codebase and remove redundant logic/hooks.
-- [ ] Introduce **VIP Pass** NFTs:
-  - ERC-1155 token ID `2` on the same contract.
-  - Grants access to special areas or Discord roles (e.g., via role verification).
-- [ ] Add backend listener and migrate to **event-driven inventory updates**.
-- [ ] Add transitions/placeholder states to enhance perceived performance during pack opening.
-- [ ] Add responsiveness testing on mobile (video and modal scaling).
+- **Mint** Mystery Packs (ERC-1155 id `1`) and VIP Passes (id `2`).
+- **Open a pack** → burns the token on-chain (ethers v6 + Passport) → polls the
+  Immutable API for the aliens the webhook mints → animated reveal of 3 Aliens.
+- **Rarity system** (Common → Rare → Legendary → Mythical) with a shared
+  colour/glow scale and rarity-aware sorting.
+- **Inventory** with collection filter, rarity sort, loading skeletons, empty
+  states, and error/retry.
+- Detailed NFT metadata dialog.
+- Wallet connect via Immutable Passport, with a single shared `EIP1193Context`
+  as the source of truth (auto-reconnect, connect/disconnect).
+- Cyberpunk-neon design system (Orbitron + Exo 2, violet/gold palette), with
+  `prefers-reduced-motion` support.
 
 ---
 
-### 📦 Inventory Design
+## Tech Stack
 
-- Packs and VIP Passes are both on the same 1155 contract:
-  - Token ID 1 = **Mystery Pack**
-  - Token ID 2 = **VIP Pass**
-- Only Token ID 1 is openable. Token ID 2 will be used for Discord integration later.
+- **Next.js 14** (App Router)
+- **Tailwind CSS** + **shadcn/ui** (Radix primitives)
+- **Framer Motion** for the reveal animation
+- **ethers v6** for the on-chain burn
+- **Immutable zkEVM SDK** (`@imtbl/sdk`) — Passport, Blockchain Data, webhooks
 
 ---
 
-### 📄 License
+## How pack opening works
 
-MIT (when finalized).
+```
+User clicks "Open"
+  → useBurnNFT burns pack token on the specials contract
+  → on-chain burn event
+  → /api/webhook receives the burn event, mints 3 random aliens server-side
+  → frontend polls fetchInventory(), diffs against a pre-burn snapshot
+  → newly-minted aliens are revealed in the modal
+```
+
+Burn → reveal is wired end-to-end in `hooks/use-pack-opening.tsx`.
+
+---
+
+## Known limitations
+
+- Reveal uses **polling** of the Immutable API after the burn. An event-driven
+  approach (webhook → WebSocket/push to the client) would be lower-latency; left
+  as a future improvement.
+- The sandbox `/api/mint` route has **no auth or rate limiting**, and the webhook
+  does **not verify the SNS signature** — acceptable for a testnet demo, not for
+  production.
+
+## TODO
+
+- [ ] Event-driven inventory updates (WebSocket/push instead of polling).
+- [ ] VIP Pass utility: Discord role verification / gated areas.
+- [ ] Auth + rate limiting on `/api/mint`; webhook signature verification.
+
+---
+
+## License
+
+MIT.

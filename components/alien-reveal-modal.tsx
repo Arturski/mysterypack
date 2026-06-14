@@ -1,114 +1,148 @@
 "use client";
 
-import { Card, CardContent } from "@/components/ui/card";
-import { motion, AnimatePresence } from "framer-motion";
-import { RefObject } from "react";
-import { NFT } from "@/types/nft"; // make sure this path is correct
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { motion, useReducedMotion } from "framer-motion";
+import { AlertTriangle, Loader2, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { getRarity, getRarityGlow, getRarityText } from "@/lib/rarity";
+import type { NFT } from "@/types/nft";
+import type { PackOpeningStatus } from "@/hooks/use-pack-opening";
+
+const OPEN_PACK_VIDEO =
+  "https://raw.githubusercontent.com/Arturski/public-static/main/demo/aliens/open-pack.mp4";
 
 interface Props {
-  nft: NFT | null;
-  videoRef: RefObject<HTMLVideoElement | null>;
-  showCards: boolean;
+  status: PackOpeningStatus;
   revealedAliens: NFT[];
-  setRevealedAliens: React.Dispatch<React.SetStateAction<NFT[]>>;
-  setShowCards: React.Dispatch<React.SetStateAction<boolean>>;
+  error: string | null;
   onClose: () => void;
+  onRetry: () => void;
 }
 
-const getRarity = (nft: NFT): string =>
-  nft.attributes?.find((attr) => attr.trait_type === "Rarity")?.value ??
-  "Unknown";
-
-const getRarityStyle = (rarity: string | undefined): string => {
-  switch (rarity) {
-    case "Mythical":
-      return "border-4 border-cyan-400 shadow-xl shadow-cyan-400/50";
-    case "Legendary":
-      return "border-4 border-yellow-400 shadow-lg shadow-yellow-400/50";
-    case "Rare":
-      return "border-4 border-purple-400 shadow-md shadow-purple-400/50";
-    case "Common":
-      return "border-4 border-gray-300 shadow shadow-gray-300/50";
-    default:
-      return "border border-muted shadow";
-  }
-};
-
 export default function AlienRevealModal({
-  nft,
-  videoRef,
-  showCards,
+  status,
   revealedAliens,
-  setRevealedAliens,
-  setShowCards,
+  error,
   onClose,
+  onRetry,
 }: Props) {
+  const reduceMotion = useReducedMotion();
+  const open = status !== "idle";
+  const isBusy = status === "burning" || status === "revealing";
+
   return (
-    <AnimatePresence>
-      {showCards ? (
-        <div className="p-8 bg-background">
-          <div className="grid grid-cols-3 gap-4">
-            {revealedAliens.map((alien, index) => {
-              const rarity = getRarity(alien);
-              return (
-                <motion.div
-                  key={index}
-                  initial={{ scale: 0, rotate: -180 }}
-                  animate={{ scale: 1, rotate: 0 }}
-                  transition={{
-                    delay: index * 0.2,
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 20,
-                  }}
-                >
-                  <Card
-                    className={`bg-secondary/50 backdrop-blur-sm ${getRarityStyle(
-                      rarity
-                    )}`}
-                  >
-                    <CardContent className="p-3">
-                      <div className="aspect-square bg-secondary rounded mb-2 flex items-center justify-center">
-                        <img
-                          src={alien.image || "/placeholder.svg"}
-                          alt={alien.name}
-                          className="w-full h-full object-cover rounded"
-                        />
-                      </div>
-                      <p className="text-sm font-semibold text-center">
-                        {alien.name}
-                      </p>
-                      <p className="text-xs text-center text-muted-foreground mt-1">
-                        {rarity || "Unknown Rarity"}
-                      </p>
-                    </CardContent>
-                  </Card>
-                </motion.div>
-              );
-            })}
+    <Dialog
+      open={open}
+      onOpenChange={(next) => {
+        // Don't allow accidental dismissal while a transaction is in flight.
+        if (!next && !isBusy) onClose();
+      }}
+    >
+      <DialogContent className="max-w-2xl border-primary/40">
+        {isBusy && (
+          <div className="flex flex-col items-center gap-5 py-2 text-center">
+            <DialogTitle className="font-heading tracking-wide neon-text">
+              {status === "burning" ? "Burning your pack…" : "Revealing aliens…"}
+            </DialogTitle>
+            <div className="relative w-full overflow-hidden rounded-lg border border-primary/30">
+              <video
+                src={OPEN_PACK_VIDEO}
+                className="aspect-video w-full object-cover"
+                playsInline
+                muted
+                autoPlay
+                loop
+              />
+            </div>
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              {status === "burning"
+                ? "Confirm the transaction in your wallet…"
+                : "Scanning the universe for new aliens…"}
+            </p>
           </div>
-        </div>
-      ) : (
-        <div className="relative">
-          <video
-            ref={videoRef}
-            src="https://raw.githubusercontent.com/Arturski/public-static/main/demo/aliens/open-pack.mp4"
-            className="w-full aspect-video object-contain max-h-[400px]"
-            playsInline
-            muted
-            autoPlay
-            loop
-            controls={false}
-          />
-          <div className="absolute inset-0 flex items-end justify-center pb-8">
-            <div className="bg-black/50 p-4 rounded-lg text-white">
-              <p className="animate-pulse text-center">
-                🚀 Scanning the universe for new aliens...
-              </p>
+        )}
+
+        {status === "done" && (
+          <div className="space-y-5 py-1">
+            <DialogTitle className="text-center font-heading tracking-wide neon-text">
+              You revealed {revealedAliens.length} alien
+              {revealedAliens.length === 1 ? "" : "s"}!
+            </DialogTitle>
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+              {revealedAliens.map((alien, i) => {
+                const rarity = getRarity(alien);
+                return (
+                  <motion.div
+                    key={`${alien.token_id}-${i}`}
+                    initial={
+                      reduceMotion
+                        ? { opacity: 0 }
+                        : { opacity: 0, rotateY: 90, scale: 0.85 }
+                    }
+                    animate={{ opacity: 1, rotateY: 0, scale: 1 }}
+                    transition={{
+                      delay: reduceMotion ? 0 : i * 0.18,
+                      type: "spring",
+                      stiffness: 220,
+                      damping: 18,
+                    }}
+                    className={cn(
+                      "rounded-lg border-2 bg-card/80 p-3",
+                      getRarityGlow(rarity)
+                    )}
+                  >
+                    <div className="mb-2 aspect-square overflow-hidden rounded-md bg-secondary">
+                      <img
+                        src={alien.image || "/placeholder.svg"}
+                        alt={alien.name}
+                        className="h-full w-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                    <p className="truncate text-center text-sm font-semibold">
+                      {alien.name}
+                    </p>
+                    <p
+                      className={cn(
+                        "text-center text-xs font-medium",
+                        getRarityText(rarity)
+                      )}
+                    >
+                      {rarity}
+                    </p>
+                  </motion.div>
+                );
+              })}
+            </div>
+            <Button className="w-full" onClick={onClose}>
+              Add to inventory
+            </Button>
+          </div>
+        )}
+
+        {status === "error" && (
+          <div className="flex flex-col items-center gap-4 py-4 text-center">
+            <AlertTriangle className="h-10 w-10 text-destructive" />
+            <DialogTitle className="font-heading tracking-wide">
+              Pack opening failed
+            </DialogTitle>
+            <p className="max-w-sm text-sm text-muted-foreground">
+              {error || "Something went wrong while opening your pack."}
+            </p>
+            <div className="flex w-full gap-3">
+              <Button variant="outline" className="flex-1" onClick={onClose}>
+                Close
+              </Button>
+              <Button className="flex-1" onClick={onRetry}>
+                <RotateCcw className="mr-2 h-4 w-4" />
+                Try again
+              </Button>
             </div>
           </div>
-        </div>
-      )}
-    </AnimatePresence>
+        )}
+      </DialogContent>
+    </Dialog>
   );
 }

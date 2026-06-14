@@ -1,22 +1,9 @@
 "use client";
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-
-interface Attribute {
-  trait_type: string;
-  value: string;
-}
-
-interface NFT {
-  token_id: string;
-  name: string;
-  image: string;
-  description: string;
-  collection: string;
-  contractAddress: string;
-  attributes?: Attribute[];
-}
+import { cn } from "@/lib/utils";
+import { getRarity, getRarityGlow, getRarityText } from "@/lib/rarity";
+import type { NFT } from "@/types/nft";
 
 interface NFTInfoDialogProps {
   nft: NFT | null;
@@ -25,50 +12,68 @@ interface NFTInfoDialogProps {
 
 export function NFTInfoDialog({ nft, onClose }: NFTInfoDialogProps) {
   if (!nft) return null;
+  const rarity = getRarity(nft);
 
   return (
-    <Dialog open={!!nft} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl p-6 space-y-4">
-        <div className="flex flex-col md:flex-row gap-6">
-          <div className="flex-1 overflow-y-auto max-h-[400px] pr-4">
-            <DialogTitle>{nft.name}</DialogTitle>
-            <p className="text-sm text-muted-foreground mb-2">
-              {nft.description}
-            </p>
-            <Label className="font-semibold">Token ID:</Label>
-            <p className="mb-2">{nft.token_id}</p>
-            <Label className="font-semibold">Collection:</Label>
-            <p className="mb-2">{nft.collection}</p>
-            <Label className="font-semibold">Contract Address:</Label>
-            <p className="mb-2 break-all">{nft.contractAddress}</p>
-            {nft.attributes && (
-              <div className="mt-4">
-                <Label className="font-semibold mb-2 block">Attributes</Label>
-                <table className="w-full text-sm border border-muted rounded overflow-hidden">
-                  <thead>
-                    <tr className="bg-muted">
-                      <th className="text-left px-2 py-1">Trait</th>
-                      <th className="text-left px-2 py-1">Value</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {nft.attributes.map((attr, i) => (
-                      <tr key={i} className="border-t">
-                        <td className="px-2 py-1">{attr.trait_type}</td>
-                        <td className="px-2 py-1">{String(attr.value)}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+    <Dialog open={!!nft} onOpenChange={(o) => !o && onClose()}>
+      <DialogContent className="max-w-2xl">
+        <div className="flex flex-col gap-6 md:flex-row">
+          <div
+            className={cn(
+              "shrink-0 self-center overflow-hidden rounded-lg border-2",
+              getRarityGlow(rarity)
             )}
-          </div>
-          <div className="flex-1 flex items-center justify-center">
+          >
             <img
               src={nft.image || "/placeholder.svg"}
               alt={nft.name}
-              className="w-full h-auto rounded max-h-[400px] object-contain"
+              className="h-48 w-48 object-cover md:h-56 md:w-56"
             />
+          </div>
+
+          <div className="min-w-0 flex-1 space-y-3">
+            <div>
+              <DialogTitle className="font-heading text-xl">
+                {nft.name}
+              </DialogTitle>
+              <p className={cn("text-sm font-medium", getRarityText(rarity))}>
+                {rarity}
+              </p>
+            </div>
+
+            {nft.description && (
+              <p className="text-sm text-muted-foreground">{nft.description}</p>
+            )}
+
+            <dl className="grid grid-cols-[auto_1fr] gap-x-3 gap-y-1 text-sm">
+              <dt className="text-muted-foreground">Token ID</dt>
+              <dd className="font-mono">{nft.token_id}</dd>
+              <dt className="text-muted-foreground">Collection</dt>
+              <dd className="capitalize">{nft.collection}</dd>
+              <dt className="text-muted-foreground">Contract</dt>
+              <dd className="break-all font-mono text-xs">
+                {nft.contractAddress}
+              </dd>
+            </dl>
+
+            {nft.attributes && nft.attributes.length > 0 && (
+              <div>
+                <p className="mb-2 text-sm font-semibold">Attributes</p>
+                <div className="grid grid-cols-2 gap-2">
+                  {nft.attributes.map((attr, i) => (
+                    <div
+                      key={i}
+                      className="rounded-md border border-border/60 bg-secondary/40 px-3 py-1.5"
+                    >
+                      <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+                        {attr.trait_type}
+                      </p>
+                      <p className="text-sm font-medium">{String(attr.value)}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>

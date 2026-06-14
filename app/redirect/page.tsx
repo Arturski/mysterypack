@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation"; // Use Next.js router
-import { passportInstance } from "../../lib/immutable-passport-client"; //
+import { useRouter } from "next/navigation";
+import { Loader2 } from "lucide-react";
+import { passportInstance } from "@/lib/immutable-passport-client";
 
 export default function PassportRedirect() {
   const router = useRouter();
@@ -11,19 +12,19 @@ export default function PassportRedirect() {
     async function handleRedirect() {
       try {
         await passportInstance.loginCallback();
-        router.push("/"); // Redirect to homepage after successful login
       } catch (error) {
         console.error("Passport redirect error:", error);
-        router.push("/login"); // Redirect to login if there's an error
+      } finally {
+        router.replace("/");
       }
     }
-
     handleRedirect();
-  }, []);
+  }, [router]);
 
   return (
-    <div className="flex items-center justify-center h-screen text-white">
-      Loading...
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-3 space-bg text-foreground">
+      <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      <p className="font-heading tracking-wide">Completing sign-in…</p>
     </div>
   );
 }
